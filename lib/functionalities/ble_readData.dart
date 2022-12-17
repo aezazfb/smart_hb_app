@@ -6,10 +6,10 @@ import 'package:get/get.dart';
 
 class BleController {
   final frb = FlutterReactiveBle();
-  String dvcid = 'ACF96F8D-3E05-4929-1C08-AC7B86B20453';
+  //String dvcid = 'ACF96F8D-3E05-4929-1C08-AC7B86B20453';
   // String dvcid = '68:76:0B:0D:37:C2';
   // String svcid = "0000ffe0-0000-1000-8000-00805f9b34fb";
-  String svcid = "180f";
+  //String svcid = "180f";
   late StreamSubscription<ConnectionStateUpdate> connection;
   late QualifiedCharacteristic rx;
   RxString status = 'not connected'.obs;
@@ -32,3 +32,25 @@ class BleController {
         frb.subscribeToCharacteristic(rx).listen((data){
           temperature.value = ascii.decode(data).toString();
         });}});}}
+
+class TheData{
+  final frb = FlutterReactiveBle();
+  late StreamSubscription<ConnectionStateUpdate> connection;
+  late QualifiedCharacteristic rx;
+  RxString status = 'not connected'.obs;
+  RxString hB = ' '.obs;
+
+  void readData(dev) async{
+
+    rx = QualifiedCharacteristic(
+        serviceId: Uuid.parse("ffe0"),
+        characteristicId: Uuid.parse("ffe1"),
+        deviceId: dev);
+
+    // subscribe to rx
+    frb.subscribeToCharacteristic(rx).listen((data){
+      hB.value = ascii.decode(data).toString();
+    }
+    );
+  }
+}

@@ -27,49 +27,25 @@ class _dataScreenState extends State<dataScreen> {
 });
   final DiscoveredDevice theDevice;
   final frb = FlutterReactiveBle();
-  final ble_controller = Get.put(BleController());
-  late BleDeviceConnector connectMyDevice;
+  final theData = Get.put(TheData());
+
   bool isObsecured = true;
-  late StreamSubscription<ConnectionStateUpdate> connection;
-  late QualifiedCharacteristic rx;
-  RxString status = 'not connected'.obs;
-  RxString hbValue = ' '.obs;
-  String myd = '';
-
-  void _disconnect_it(dev){
-    connectMyDevice.disconnect(dev);
-    //isConnected = false;
-  }
-
-  void readData() async{
-    // rx = QualifiedCharacteristic(
-    //     serviceId: Uuid.parse("ffe0"),
-    //     characteristicId: Uuid.parse("ffe1"),
-    //     deviceId: theDevice.id
-    // );
-    //
-    // // subscribe to rx
-    // frb.subscribeToCharacteristic(rx).listen((data){
-    //   hbValue.value = ascii.decode(data).toString();
-    // });
 
 
-    status.value = 'connecting...';
-    connection = frb.connectToDevice(id: theDevice.id).listen((state){
-      if (state.connectionState == DeviceConnectionState.connected){
-        status.value = 'connected!';
 
-        // get rx
-        rx = QualifiedCharacteristic(
-            serviceId: Uuid.parse("ffe0"),
-            characteristicId: Uuid.parse("ffe1"),
-            deviceId: theDevice.id);
-
-        // subscribe to rx
-        frb.subscribeToCharacteristic(rx).listen((data){
-          hbValue.value = ascii.decode(data).toString();
-        });}});
-  }
+  // void readData(dev) async{
+  //
+  //   rx = QualifiedCharacteristic(
+  //       serviceId: Uuid.parse("ffe0"),
+  //       characteristicId: Uuid.parse("ffe1"),
+  //       deviceId: dev);
+  //
+  //   // subscribe to rx
+  //   frb.subscribeToCharacteristic(rx).listen((data){
+  //     hbValue.value = ascii.decode(data).toString();
+  //   }
+  //   );
+  // }
 
   void _Switch()
   {
@@ -95,7 +71,7 @@ class _dataScreenState extends State<dataScreen> {
                   children: [
                     Row(
                       children: [
-                        Text('Hello ${theDevice.name} ${hbValue.value.obs}', style: TextStyle(
+                        Text('Hello ${theDevice.name} ', style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 40,
                             fontWeight: FontWeight.w700
@@ -123,7 +99,7 @@ class _dataScreenState extends State<dataScreen> {
                         //     fontSize: 40,
                         //     fontWeight: FontWeight.w700,
                         // ),),
-                        Obx(() => Text('HB is: ${ble_controller.temperature }',
+                        Obx(() => Text('~${theData.hB}',
                             style:TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 40,
@@ -200,9 +176,9 @@ class _dataScreenState extends State<dataScreen> {
                           child: ElevatedButton(
                               onPressed: (){
                                 //ble_controller.connect(theDevice.id);
-                                Fluttertoast.showToast(msg: 'Connected to ${ble_controller.status}!',
+                                Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
                                     timeInSecForIosWeb: 3);
-                                readData();
+                                theData.readData(theDevice.id);
                                 // myd = hbValue.value;
                               },
                               child: Text('Read Data', style: TextStyle(
@@ -222,7 +198,7 @@ class _dataScreenState extends State<dataScreen> {
                           width: double.infinity,
                           child: TextButton(
                             onPressed: (){
-                              Fluttertoast.showToast(msg: 'Connected to ${ble_controller.temperature}!',
+                              Fluttertoast.showToast(msg: 'This ${theData.hB}!',
                                   timeInSecForIosWeb: 3);
                             },
                             child: Text('Create Account', style: TextStyle(

@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
 // import 'package:myble2/src/ble/ble_scanner.dart';
 import 'package:smart_hb_app/functionalities/ble_scanner.dart';
 import 'package:provider/provider.dart';
@@ -80,26 +77,11 @@ class _DeviceListState extends State<_DeviceList> {
   }
 
   bool isConnected = false;
-  final frb = FlutterReactiveBle();
-  late QualifiedCharacteristic rx;
-  RxString status = 'not connected'.obs;
-  RxString temperature = ' '.obs;
-
-  void _connect_it(dev) async{
+  void _connect_it(dev){
     widget.connectMyDevice.connect(dev);
     isConnected = true;
-
-    rx = QualifiedCharacteristic(
-        serviceId: Uuid.parse("ffe0"),
-        characteristicId: Uuid.parse("ffe1"),
-        deviceId: dev);
-
-    // subscribe to rx
-    frb.subscribeToCharacteristic(rx).listen((data){
-      temperature.value = ascii.decode(data).toString();
   }
-    );
-  }
+
   void _disconnect_it(dev){
     widget.connectMyDevice.disconnect(dev);
     isConnected = false;
@@ -203,11 +185,11 @@ class _DeviceListState extends State<_DeviceList> {
                             _connect_it(device.id);
                             Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
                                 timeInSecForIosWeb: 3);
-                            // await Navigator.push<void>(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (_) =>
-                            //             dataScreen(thedevice: device)));
+                            await Navigator.push<void>(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        dataScreen(thedevice: device)));
                           }
                           // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ye rahha snack!")));
 
@@ -222,12 +204,6 @@ class _DeviceListState extends State<_DeviceList> {
                     .toList(),
               ),
             ),
-            Obx(() => Text('HB is: ${temperature}',
-                style:TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 40,
-                    fontWeight: FontWeight.w700
-                ))),
           ],
         ),
       );
