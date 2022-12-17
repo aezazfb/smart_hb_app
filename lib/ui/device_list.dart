@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 // import 'package:myble2/src/ble/ble_scanner.dart';
 import 'package:smart_hb_app/functionalities/ble_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_hb_app/functionalities/ble_device_connector.dart';
 
+import 'package:smart_hb_app/ui/dataScreen.dart';
 import '../widgets.dart';
 // import 'device_detail/device_detail_screen.dart';
 
@@ -12,8 +17,8 @@ class DeviceListScreen extends StatelessWidget {
   const DeviceListScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Consumer2<BleScanner, BleScannerState?>(
-        builder: (_, bleScanner, bleScannerState, __) => _DeviceList(
+  Widget build(BuildContext context) => Consumer3<BleDeviceConnector, BleScanner, BleScannerState?>(
+        builder: (_, deviceConnector, bleScanner, bleScannerState, __) => _DeviceList(
           scannerState: bleScannerState ??
               const BleScannerState(
                 discoveredDevices: [],
@@ -21,6 +26,7 @@ class DeviceListScreen extends StatelessWidget {
               ),
           startScan: bleScanner.startScan,
           stopScan: bleScanner.stopScan,
+          connectMyDevice: deviceConnector,
         ),
       );
 }
@@ -29,11 +35,14 @@ class _DeviceList extends StatefulWidget {
   const _DeviceList(
       {required this.scannerState,
       required this.startScan,
-      required this.stopScan});
+      required this.stopScan,
+        required this.connectMyDevice});
 
   final BleScannerState scannerState;
   final void Function(List<Uuid>) startScan;
   final VoidCallback stopScan;
+  final BleDeviceConnector connectMyDevice;
+
 
   @override
   _DeviceListState createState() => _DeviceListState();
@@ -68,6 +77,32 @@ class _DeviceListState extends State<_DeviceList> {
         return false;
       }
     }
+  }
+
+  bool isConnected = false;
+  final frb = FlutterReactiveBle();
+  late QualifiedCharacteristic rx;
+  RxString status = 'not connected'.obs;
+  RxString temperature = ' '.obs;
+
+  void _connect_it(dev) async{
+    widget.connectMyDevice.connect(dev);
+    isConnected = true;
+
+    rx = QualifiedCharacteristic(
+        serviceId: Uuid.parse("ffe0"),
+        characteristicId: Uuid.parse("ffe1"),
+        deviceId: dev);
+
+    // subscribe to rx
+    frb.subscribeToCharacteristic(rx).listen((data){
+      temperature.value = ascii.decode(data).toString();
+  }
+    );
+  }
+  void _disconnect_it(dev){
+    widget.connectMyDevice.disconnect(dev);
+    isConnected = false;
   }
 
   void _startScanning() {
@@ -151,10 +186,31 @@ class _DeviceListState extends State<_DeviceList> {
                         subtitle: Text("${device.id}\nRSSI: ${device.rssi}"),
                         leading: const BluetoothIcon(),
                         onTap: () async {
-                          Fluttertoast.showToast(msg: device.name + device.id,
-                              timeInSecForIosWeb: 3);
+                          widget.stopScan();
+
+                          // Fluttertoast.showToast(msg: device.name + device.id,
+                          //     timeInSecForIosWeb: 3);
+                          // _connect_it(device.id);
+                          // Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
+                          //     timeInSecForIosWeb: 3);
+                          if(isConnected){
+                            // my disconnect condition
+                            _disconnect_it(device.id);
+                            Fluttertoast.showToast(msg: 'Disconnected ${device.name}!',
+                                timeInSecForIosWeb: 3);
+                          }
+                          else{
+                            _connect_it(device.id);
+                            Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
+                                timeInSecForIosWeb: 3);
+                            // await Navigator.push<void>(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (_) =>
+                            //             dataScreen(thedevice: device)));
+                          }
                           // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ye rahha snack!")));
-                          // widget.stopScan();
+
                           // await Navigator.push<void>(
                           //     context,
                           //     MaterialPageRoute(
@@ -166,6 +222,12 @@ class _DeviceListState extends State<_DeviceList> {
                     .toList(),
               ),
             ),
+            Obx(() => Text('HB is: ${temperature}',
+                style:TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 40,
+                    fontWeight: FontWeight.w700
+                ))),
           ],
         ),
       );

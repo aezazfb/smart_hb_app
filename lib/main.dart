@@ -69,7 +69,7 @@ void main() {
         ),
       ],
       child: MaterialApp(
-        title: 'Flutter Reactive BLE example',
+        title: 'SmartHb',
         color: _themeColor,
         theme: ThemeData(primarySwatch: _themeColor),
         home: const HomeScreen(),
