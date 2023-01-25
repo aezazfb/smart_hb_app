@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smart_hb_app/functionalities/ble_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_hb_app/functionalities/ble_device_connector.dart';
+import 'package:smart_hb_app/globalVars.dart';
 
 import 'package:smart_hb_app/ui/dataScreen.dart';
 import '../widgets.dart';
@@ -183,13 +184,16 @@ class _DeviceListState extends State<_DeviceList> {
                           }
                           else{
                             _connect_it(device.id);
-                            Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
+                            setState(() {
+                              theGlobalDevice = device;
+                            });
+                            Fluttertoast.showToast(msg: 'Connected to ${device.name} ${theGlobalDevice.name}!',
                                 timeInSecForIosWeb: 3);
                             await Navigator.push<void>(
                                 context,
                                 MaterialPageRoute(
                                     builder: (_) =>
-                                        dataScreen(thedevice: device)));
+                                        dataScreen(thedevice: theGlobalDevice)));
                           }
                           // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ye rahha snack!")));
 

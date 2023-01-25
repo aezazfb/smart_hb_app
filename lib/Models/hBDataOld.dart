@@ -27,19 +27,19 @@ class HBData{
   });
 
   HBData copy({
-  int? id,
+    int? id,
     String? firstName,
     String? lastName,
     String? hBValue,
     DateTime? date
-}) => HBData(id: id ?? this.id,
+  }) => HBData(id: id ?? this.id,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       hBValue: hBValue ?? this.hBValue,
       date: date ?? this.date);
 
   static HBData fromJson(Map<String, Object?> js) => HBData(
-    id: js[HBDataTableFields.id] as int?,
+      id: js[HBDataTableFields.id] as int?,
       firstName: js[HBDataTableFields.fName] as String,
       lastName: js[HBDataTableFields.lName] as String,
       hBValue: js[HBDataTableFields.hBValue] as String,

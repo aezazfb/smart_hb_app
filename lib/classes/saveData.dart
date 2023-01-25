@@ -1,26 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
-import 'package:smart_hb_app/Models/hBData.dart';
+import 'package:smart_hb_app/Models/hBProfileData.dart';
 import 'package:sqflite/sqflite.dart';
 
-class sqlLiteDb{
-  final int id;
-  final String first_name;
-  final String last_name;
-  final String data;
-  final DateTime date;
-
-  const sqlLiteDb({
-    required this.id,
-    required this.first_name,
-    required this.last_name,
-    required this.data,
-    required this.date,
-});
-
-}
 
 // final database = openDatabase(
 //   // Set the path to the database. Note: Using the `join` function from the
@@ -64,6 +47,7 @@ class db_connection{
 
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT'; // = 'INTEGER NOT NULL'; for nullable integers
     const textType = 'TEXT NOT NULL';
+    const intType = 'INTEGER NOT NULL';
     const boolType = 'BOOLEAN NOT NULL';
 
     print("db created Az");
@@ -74,9 +58,21 @@ class db_connection{
     CREATE TABLE $hBDataTableName (
     ${HBDataTableFields.id} $idType,
     ${HBDataTableFields.fName} $textType,
-    ${HBDataTableFields.lName} $textType,
+    ${HBDataTableFields.age} $intType,
+    ${HBDataTableFields.gender} $textType,
     ${HBDataTableFields.hBValue} $textType,
     ${HBDataTableFields.time} $textType    
+    )
+    ''');
+
+    await db.execute('''
+    CREATE TABLE $hBDataTableNameWithId (
+    ${HBDataTableFields.id} 'INTEGER',
+    ${HBDataTableFields.fName} $textType,
+    ${HBDataTableFields.age} 'INTEGER',
+    ${HBDataTableFields.gender} 'TEXT',
+    ${HBDataTableFields.hBValue} $textType,
+    ${HBDataTableFields.time} $textType   
     )
     ''');
     print("Table Create Az!");
@@ -98,22 +94,40 @@ class db_connection{
 
     //final idNew = await db.rawInsert("INSERT into table_name ($columns) VALUES ($values)"); //Simple SQL ki query !
 
-    print("Adding new Value Az");
+    //print("Adding new Value Az");
     final idNew = await db.insert(hBDataTableName, hbDataValues.toMyJson());
-    print("Added    new Value Az");
+    //print("Added    new Value Az");
 
     return hbDataValues.copy(id : idNew);
+  }
+
+  Future<HBData> createHb (HBData hbDataWithId) async {
+    final db = await instance.db_opening;
+
+    // final sonj = hbDataValues.toMyJson();
+    // const columns = '${HBDataTableFields.hBValue}, ${HBDataTableFields.fName}';
+    // final values = '${sonj[HBDataTableFields.hBValue]}, ${sonj[HBDataTableFields.fName]}';
+
+    //final idNew = await db.rawInsert("INSERT into table_name ($columns) VALUES ($values)"); //Simple SQL ki query !
+
+    print("Adding new Value Az");
+    final profileId = await db.insert(hBDataTableNameWithId, hbDataWithId.toMyJson());
+    print("Added    new Value Az");
+
+    return hbDataWithId.copy(id : profileId);
   }
 
   Future<HBData> getHB(String f_Name) async {
     final db = await instance.db_opening;
 
-    final maps = await db.query(
-      hBDataTableName,
-      columns: HBDataTableFields.myvalues,
-      where: '${HBDataTableFields.fName} = ?',
-      whereArgs: [f_Name]
-    );
+    // final maps = await db.query(
+    //   hBDataTableName,
+    //   columns: HBDataTableFields.myvalues,
+    //   where: '${HBDataTableFields.fName} = ?',
+    //   whereArgs: [f_Name]
+    // );
+
+    final maps = await db.rawQuery("SELECT * FROM $hBDataTableName WHERE fName = '$f_Name'");
 
     if(maps.isNotEmpty){
       return HBData.fromJson(maps.first);
@@ -123,12 +137,51 @@ class db_connection{
     }
   }
 
-  Future<List<HBData>> getAllhBs() async{
+  Future<HBData> getHBbyId(int? profileId) async {
+    final db = await instance.db_opening;
+
+    // final maps = await db.query(
+    //   hBDataTableName,
+    //   columns: HBDataTableFields.myvalues,
+    //   where: '${HBDataTableFields.fName} = ?',
+    //   whereArgs: [f_Name]
+    // );
+
+    print("Az getting Value");
+
+    int pro = 1;
+
+    // if(profileId != null)
+    //   pro = pro + int.parse(profileId);
+
+    final maps = await db.rawQuery("SELECT * FROM $hBDataTableNameWithId WHERE ${HBDataTableFields.id} = $profileId");
+
+    if(maps.isNotEmpty){
+      return HBData.fromJson(maps.first);
+    }
+    else{
+      throw Exception('$profileId not found!');
+    }
+  }
+
+  Future<List<HBData>> getAllhBProfiles() async{
     final db = await instance.db_opening;
 
     const orderByVal = '${HBDataTableFields.time} ASC';
-    // final myResult = await db.rawQuery("SELECT * FROM $hBDataTableName ORDER BY $orderByVal");
-    final myResult = await db.query(hBDataTableName, orderBy: orderByVal);
+    final myResult = await db.rawQuery("SELECT * FROM $hBDataTableName ORDER BY $orderByVal");
+    // final myResult = await db.rawQuery("SELECT DISTINCT * FROM $hBDataTableName ORDER BY $orderByVal");
+    //final myResult = await db.query(hBDataTableNameWithId, orderBy: orderByVal);
+
+    return myResult.map((eData) => HBData.fromJson(eData)).toList();
+  }
+
+  Future<List<HBData>> getAllhBsById(int? profId) async{
+    final db = await instance.db_opening;
+
+    const orderByVal = '${HBDataTableFields.time} ASC';
+    final myResult = await db.rawQuery("SELECT * FROM $hBDataTableNameWithId WHERE _id = ${profId} ORDER BY $orderByVal");
+    // final myResult = await db.rawQuery("SELECT DISTINCT * FROM $hBDataTableName ORDER BY $orderByVal");
+    //final myResult = await db.query(hBDataTableNameWithId, orderBy: orderByVal);
 
     return myResult.map((eData) => HBData.fromJson(eData)).toList();
   }

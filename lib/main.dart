@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:smart_hb_app/functionalities/ble_device_connector.dart';
@@ -7,9 +9,11 @@ import 'package:smart_hb_app/functionalities/ble_device_interactor.dart';
 import 'package:smart_hb_app/functionalities/ble_scanner.dart';
 // import 'package:myble2/src/ble/ble_scanner.dart';
 import 'package:smart_hb_app/functionalities/ble_status_monitor.dart';
+import 'package:smart_hb_app/ui/Menu/profiles.dart';
 // import 'package:myble2/src/ble/ble_status_monitor.dart';
 
 import 'package:smart_hb_app/ui/ble_status_screen.dart';
+import 'package:smart_hb_app/ui/dataScreen.dart';
 //import 'package:myble2/src/ui/ble_status_screen.dart';
 
 import 'package:smart_hb_app/ui/device_list.dart';
@@ -28,6 +32,9 @@ void main() {
   final _ble = FlutterReactiveBle();
   final _scanner = BleScanner(ble: _ble, logMessage: _bleLogger.addToLog);
   final _monitor = BleStatusMonitor(_ble);
+  Uint8List example = Uint8List.fromList([0, 2, 5 ,7]);
+
+  DiscoveredDevice fakeDevice = DiscoveredDevice(id: "1", name: "Az", serviceData: {}, manufacturerData: example, rssi: 2, serviceUuids: []);
   final _connector = BleDeviceConnector(
     ble: _ble,
     logMessage: _bleLogger.addToLog,
@@ -72,7 +79,7 @@ void main() {
         title: 'SmartHb',
         color: _themeColor,
         theme: ThemeData(primarySwatch: _themeColor),
-        home: const HomeScreen(),
+        home:  const HomeScreen(),
       ),
     ),
   );
