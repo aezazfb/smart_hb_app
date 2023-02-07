@@ -6,12 +6,16 @@ import 'package:smart_hb_app/functionalities/ble_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_hb_app/functionalities/ble_device_connector.dart';
 import 'package:smart_hb_app/globalVars.dart';
+import 'package:smart_hb_app/ui/HbDrawer.dart';
+import 'package:smart_hb_app/ui/Menu/profiles.dart';
 
 import 'package:smart_hb_app/ui/dataScreen.dart';
+import 'package:smart_hb_app/ui/profile/profile_screen.dart';
 import '../widgets.dart';
 // import 'device_detail/device_detail_screen.dart';
 
 class DeviceListScreen extends StatelessWidget {
+  static String routeName = "/deviceList";
   const DeviceListScreen({Key? key}) : super(key: key);
 
   @override
@@ -95,9 +99,10 @@ class _DeviceListState extends State<_DeviceList> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+    drawer: const HbDrawer(),
         appBar: AppBar(
-          title: const Text('Scan for devices'),
-          backgroundColor: Colors.amberAccent,
+          title: const Text('Scan for SmartHb'),
+          backgroundColor: themeBgColour,
         ),
         body: Column(
           children: [
@@ -123,17 +128,30 @@ class _DeviceListState extends State<_DeviceList> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        child: const Text('Scan'),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: themeBtnColour,
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                            textStyle:
+                            const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+
                         onPressed: !widget.scannerState.scanIsInProgress &&
                                 _isValidUuidInput()
                             ? _startScanning
                             : null,
+                        child: const Text('Scan'),
                       ),
                       ElevatedButton(
-                        child: const Text('Stop'),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: themeBtnColour,
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                            textStyle:
+                            const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                         onPressed: widget.scannerState.scanIsInProgress
                             ? widget.stopScan
                             : null,
+                        child: const Text('Stop'),
                       ),
                     ],
                   ),
@@ -166,7 +184,7 @@ class _DeviceListState extends State<_DeviceList> {
                     .map(
                       (device) => ListTile(
                         title: Text(device.name),
-                        subtitle: Text("${device.id}\nRSSI: ${device.rssi}"),
+                        subtitle: Text(device.id), //\nRSSI: ${device.rssi}
                         leading: const BluetoothIcon(),
                         onTap: () async {
                           widget.stopScan();
@@ -184,16 +202,20 @@ class _DeviceListState extends State<_DeviceList> {
                           }
                           else{
                             _connect_it(device.id);
+                            Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
+                                timeInSecForIosWeb: 3);
+
                             setState(() {
                               theGlobalDevice = device;
                             });
-                            Fluttertoast.showToast(msg: 'Connected to ${device.name} ${theGlobalDevice.name}!',
-                                timeInSecForIosWeb: 3);
-                            await Navigator.push<void>(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) =>
-                                        dataScreen(thedevice: theGlobalDevice)));
+
+                            Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+
+                            // await Navigator.push<void>(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (_) =>
+                            //             dataScreen(thedevice: theGlobalDevice)));
                           }
                           // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ye rahha snack!")));
 

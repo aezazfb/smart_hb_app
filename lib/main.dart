@@ -9,6 +9,7 @@ import 'package:smart_hb_app/functionalities/ble_device_interactor.dart';
 import 'package:smart_hb_app/functionalities/ble_scanner.dart';
 // import 'package:myble2/src/ble/ble_scanner.dart';
 import 'package:smart_hb_app/functionalities/ble_status_monitor.dart';
+import 'package:smart_hb_app/routes.dart';
 import 'package:smart_hb_app/ui/Menu/profiles.dart';
 // import 'package:myble2/src/ble/ble_status_monitor.dart';
 
@@ -21,9 +22,10 @@ import 'package:smart_hb_app/ui/device_list.dart';
 import 'package:provider/provider.dart';
 
 import 'package:smart_hb_app/functionalities/ble_logger.dart';
+import 'package:smart_hb_app/ui/splashscreen.dart';
 // import 'src/ble/ble_logger.dart';
 
-const _themeColor = Colors.lightGreen;
+const _themeColor = Colors.green;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -79,13 +81,15 @@ void main() {
         title: 'SmartHb',
         color: _themeColor,
         theme: ThemeData(primarySwatch: _themeColor),
-        home:  const HomeScreen(),
+        home:  const SplashScreen(),
+        routes: routes,
       ),
     ),
   );
 }
 
 class HomeScreen extends StatelessWidget {
+  static String routeName = "/homeee";
   const HomeScreen({
     Key? key,
   }) : super(key: key);

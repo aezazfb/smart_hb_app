@@ -14,8 +14,10 @@ import 'package:smart_hb_app/functionalities/ble_device_connector.dart';
 import 'package:smart_hb_app/functionalities/ble_readData.dart';
 import 'package:smart_hb_app/globalVars.dart';
 import 'package:smart_hb_app/ui/Menu/profiles.dart';
+import 'package:smart_hb_app/ui/profile/profile_screen.dart';
 
 class dataScreen extends StatefulWidget {
+  static String routeName = "/add-profile";
 
   final DiscoveredDevice thedevice;
   const dataScreen({
@@ -70,7 +72,7 @@ class _dataScreenState extends State<dataScreen> {
     final nt = HBData(
         firstName: firstnameController.text.isEmpty ? 'testdata' : firstnameController.text,
         age: lastnameController.text.isEmpty ? 79 : int.parse(lastnameController.text),
-        gender: genderController.text.isEmpty ? "Other" : genderController.text,
+        gender: dropdownValue, //genderController.text.isEmpty ? "Other" : genderController.text,
         hBValue: "ValueAdded",
         date: DateTime.now());
     // await db_connection.instance.create(nt).then((value) => Fluttertoast.showToast(msg: 'Added!!! ${value.id}',
@@ -106,6 +108,9 @@ class _dataScreenState extends State<dataScreen> {
   TextEditingController rController = TextEditingController();
   TextEditingController tController = TextEditingController();
 
+  static const List<String> list = <String>['Male', 'Female', 'Other'];
+  String dropdownValue = list.first;
+
   bool isSaveBtnDisabled = false;
 
 
@@ -130,6 +135,7 @@ class _dataScreenState extends State<dataScreen> {
     });
   }
   bool saveVisibility = false;
+  bool readingData = false;
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +144,13 @@ class _dataScreenState extends State<dataScreen> {
       debugShowCheckedModeBanner: false,
       home: SafeArea(
         child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: themeBgColour,
+            leading: IconButton(onPressed: (){
+              Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+            }, icon: const Icon(Icons.arrow_back_rounded),
+            color: themeBtnColour,),
+          ),
           backgroundColor: Colors.white,
           body: Padding(
             padding: const EdgeInsets.all(25.0),
@@ -150,46 +163,42 @@ class _dataScreenState extends State<dataScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        theData.hB == ' ' ? Text("Let's Read", style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 40,
-                            fontWeight: FontWeight.w700
-                        ),) : Obx(() => Text('${theData.hB}',
-                            style:TextStyle(
-                                fontFamily: 'Montserrat',
+                        Obx(() => Text(theData.hB != ' ' ? '${theData.hB}' : "Let's Read",
+                            style:const TextStyle(
+                                fontFamily: themeFont,
                                 fontSize: 40,
                                 fontWeight: FontWeight.w700
                             ))),
 
-                        Text('.', style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 40,
-                            fontWeight: FontWeight.w700,
-                            color: Color.fromRGBO(93, 157, 254, 1)
-                        ),),
+                        // Text('.', style: TextStyle(
+                        //     fontFamily: 'Montserrat',
+                        //     fontSize: 40,
+                        //     fontWeight: FontWeight.w700,
+                        //     color: Color.fromRGBO(93, 157, 254, 1)
+                        // ),),
                       ],
                     ),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('hB', style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 40,
-                            fontWeight: FontWeight.w700,
-                            color: Color.fromRGBO(93, 157, 254, 1)
-                        ),),
+                        // Text('Hb', style: TextStyle(
+                        //     fontFamily: 'Montserrat',
+                        //     fontSize: 40,
+                        //     fontWeight: FontWeight.w700,
+                        //     color: Color.fromRGBO(93, 157, 254, 1)
+                        // ),),
 
-                        Obx(() => Text('~${theData.hB}',
-                            style:TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 40,
-                                fontWeight: FontWeight.w700
-                            ))),
+                        // Obx(() => Text('${theData.hB}',
+                        //     style:TextStyle(
+                        //         fontFamily: 'Montserrat',
+                        //         fontSize: 40,
+                        //         fontWeight: FontWeight.w700
+                        //     ))),
                       ],
                     ),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 80,
                     ),
 
@@ -197,53 +206,62 @@ class _dataScreenState extends State<dataScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
+
                         onPressed: (){
                           //ble_controller.connect(theDevice.id);
-                          Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
-                              timeInSecForIosWeb: 3);
-                          theData.readData(theDevice.id);
+                          if(readingData){
+                            Fluttertoast.showToast(msg: 'Reading Already!',
+                                timeInSecForIosWeb: 2);
+                          }
+                          else{
+                            Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
+                                timeInSecForIosWeb: 3);
+                            theData.readData(theDevice.id);
 
-                          setState(() {
-                            isSaveBtnDisabled = true;
-                          });
-                          // myd = hbValue.value;
+                            setState(() {
+                              isSaveBtnDisabled = true;
+                              readingData = true;
+                            });
+                            // myd = hbValue.value;
+                          }
+
                         },
-                        child: Text('Start Reading Data', style: TextStyle(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                        ),
+                        child: Text(!readingData ? 'Start Reading Data' : 'Reading Data!', style: const TextStyle(
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.w600,
                         )),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Color.fromRGBO(93, 157, 254, 1)),
-                        ),
                       ),
                     ),
 
                     //temp profile button
 
-                    SizedBox(
-                      height: 80,
-                    ),
+                    // SizedBox(
+                    //   height: 80,
+                    // ),
+                    //
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   height: 50,
+                    //   child: ElevatedButton(
+                    //     onPressed: () async {
+                    //       await Navigator.of(context).push(MaterialPageRoute(
+                    //         builder: (context) => HbsPage(),
+                    //       ));
+                    //     },
+                    //     child: Text('See Profiles', style: TextStyle(
+                    //       fontFamily: 'Montserrat',
+                    //       fontWeight: FontWeight.w600,
+                    //     )),
+                    //     style: ButtonStyle(
+                    //       backgroundColor: MaterialStateProperty.all(Color.fromRGBO(93, 157, 254, 1)),
+                    //     ),
+                    //   ),
+                    // ),
 
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => HbsPage(),
-                          ));
-                        },
-                        child: Text('See Profiles', style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w600,
-                        )),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Color.fromRGBO(93, 157, 254, 1)),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
 
@@ -262,18 +280,18 @@ class _dataScreenState extends State<dataScreen> {
                               isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
                             });
                           },
-                          child: Text('Save Data', style: TextStyle(
+                          child: const Text('Add a Profile', style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w600,
                           )),
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Color.fromRGBO(93, 157, 254, 1)),
+                            backgroundColor: MaterialStateProperty.all(themeBtnColour),
                           ),
                         ),
                       ),
                     ),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 80,
                     ),
 
@@ -287,7 +305,7 @@ class _dataScreenState extends State<dataScreen> {
                           TextFormField(
                             controller: firstnameController,
                             decoration: InputDecoration(
-                                focusedBorder: UnderlineInputBorder(
+                                focusedBorder: const UnderlineInputBorder(
                                   borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
                                 ),
                               labelText: 'Person Name',
@@ -300,7 +318,7 @@ class _dataScreenState extends State<dataScreen> {
                               )
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 35,
                           ),
 
@@ -308,7 +326,7 @@ class _dataScreenState extends State<dataScreen> {
                             controller: lastnameController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                                focusedBorder: UnderlineInputBorder(
+                                focusedBorder: const UnderlineInputBorder(
                                   borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
                                 ),
                                 labelText: 'Age',
@@ -321,7 +339,7 @@ class _dataScreenState extends State<dataScreen> {
                                 )
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 35,
                           ),
 
@@ -350,46 +368,71 @@ class _dataScreenState extends State<dataScreen> {
                           //       )
                           //   ),
                           // ),
-                          TextFormField(
-                            controller: genderController,
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
-                                ),
-                                labelText: 'Gender',
-                                labelStyle: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 1,
-                                    color: Colors.grey[400],
-                                    fontSize: 15
-                                )
+                          // TextFormField(
+                          //   controller: genderController,
+                          //   keyboardType: TextInputType.text,
+                          //   decoration: InputDecoration(
+                          //       focusedBorder: UnderlineInputBorder(
+                          //         borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
+                          //       ),
+                          //       labelText: 'Gender',
+                          //       labelStyle: TextStyle(
+                          //           fontFamily: 'Montserrat',
+                          //           fontWeight: FontWeight.w500,
+                          //           letterSpacing: 1,
+                          //           color: Colors.grey[400],
+                          //           fontSize: 15
+                          //       )
+                          //   ),
+                          // ),
+                          DropdownButton<String>(
+                            isExpanded: true,
+
+                            value: dropdownValue,
+                            icon: const Icon(Icons.arrow_downward),
+                            elevation: 16,
+                            style: const TextStyle(color: Colors.lightGreen),
+                            underline: Container(
+                              height: 2,
+                              color: Colors.lightGreenAccent,
                             ),
+                            onChanged: (String? value) {
+                              // This is called when the user selects an item.
+                              setState(() {
+                                dropdownValue = value!;
+                              });
+                            },
+                            items: list.map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
                           ),
-                          SizedBox(
+
+                          const SizedBox(
                             height: 35,
                           ),
 
-                          TextFormField(
-                            controller: entryController,
-                            decoration: InputDecoration(
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
-                                ),
-                                labelText: 'konsa',
-                                labelStyle: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 1,
-                                    color: Colors.grey[400],
-                                    fontSize: 15
-                                )
-                            ),
-                          ),
-                          SizedBox(
-                            height: 35,
-                          ),
+                          // TextFormField(
+                          //   controller: entryController,
+                          //   decoration: InputDecoration(
+                          //       focusedBorder: UnderlineInputBorder(
+                          //         borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
+                          //       ),
+                          //       labelText: 'konsa',
+                          //       labelStyle: TextStyle(
+                          //           fontFamily: 'Montserrat',
+                          //           fontWeight: FontWeight.w500,
+                          //           letterSpacing: 1,
+                          //           color: Colors.grey[400],
+                          //           fontSize: 15
+                          //       )
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   height: 35,
+                          // ),
                           // TextButton(onPressed: (){
                           //   showDialog(
                           //     context: context,
@@ -480,7 +523,7 @@ class _dataScreenState extends State<dataScreen> {
                           //     ),)
                           // ),
 
-                          SizedBox(
+                          const SizedBox(
                             height: 40,
                           ),
 
@@ -492,8 +535,23 @@ class _dataScreenState extends State<dataScreen> {
                             child: ElevatedButton(
                               onPressed: () async {
                                saveVisibility ? addProfile(theData.hB) : mytoast("Read Data First!", 3);
+
+                               firstnameController.clear();
+                               lastnameController.clear();
+                               genderController.clear();
+
+                               setState(() {
+                                 saveVisibility ? saveVisibility = false : saveVisibility = true;
+
+                                 isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                 readingData = false;
+                                 theData.hB = ' '.obs;
+                               });
+
+                               Navigator.pushReplacementNamed(context, HbsPage.routeName);
+
                               },
-                              child: Text('Save!', style: TextStyle(
+                              child: const Text('Save!', style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.w600,
                               )),
@@ -502,7 +560,7 @@ class _dataScreenState extends State<dataScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
 
@@ -519,17 +577,17 @@ class _dataScreenState extends State<dataScreen> {
                                   isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
                                 });
                               },
-                              child: Text('Cancel', style: TextStyle(
+                              child: const Text('Cancel', style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.w600,
                               )),
                               style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(Color.fromRGBO(93, 157, 254, 1)),
+                                backgroundColor: MaterialStateProperty.all(themeBtnColour),
                               ),
                             ),
                           ),
 
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
 
@@ -538,22 +596,22 @@ class _dataScreenState extends State<dataScreen> {
                       ),
                     ),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 40,
                     ),
 
-                    isLoading ? CircularProgressIndicator() :
-                    ElevatedButton(onPressed: (){
-                      refreshHbs();
-                      Fluttertoast.showToast(msg: '${theHbData[int.parse(entryController.text)].firstName} ${theHbData[int.parse(entryController.text)].hBValue} ' + DateFormat.yMMMd().format(theHbData[int.parse(entryController.text)].date),
-                          timeInSecForIosWeb: 3);
-                    }, child: Text('Pop it')),
+                    // isLoading ? CircularProgressIndicator() :
+                    // ElevatedButton(onPressed: (){
+                    //   refreshHbs();
+                    //   Fluttertoast.showToast(msg: '${theHbData[int.parse(entryController.text)].firstName} ${theHbData[int.parse(entryController.text)].hBValue} ' + DateFormat.yMMMd().format(theHbData[int.parse(entryController.text)].date),
+                    //       timeInSecForIosWeb: 3);
+                    // }, child: Text('Pop it')),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                     ),
 
-                    Text('SmartHB Application'),
+                    const Text('SmartHb Application'),
 
                   ],
                 ),

@@ -8,10 +8,14 @@ import 'package:smart_hb_app/Models/hBProfileData.dart';
 import 'package:smart_hb_app/classes/saveData.dart';
 import 'package:smart_hb_app/functionalities/ble_readData.dart';
 import 'package:smart_hb_app/globalVars.dart';
+import 'package:smart_hb_app/ui/Addnew/AddnewHb.dart';
+import 'package:smart_hb_app/ui/Menu/profiles.dart';
 import 'package:smart_hb_app/ui/addEditProfile.dart';
 import 'package:smart_hb_app/ui/hBEntryRow_widget.dart';
+import 'package:smart_hb_app/ui/profile/profile_screen.dart';
 
 class ProfileDetailPage extends StatefulWidget {
+  static String routeName = "/HbsPage";
   //final int noteId;
   final String fn;
   final int? profId;
@@ -41,7 +45,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
     refreshNote();
   }
 
-  final DiscoveredDevice theDevice = theGlobalDevice;
+  // final DiscoveredDevice theDevice = theGlobalDevice;
   //final frb = FlutterReactiveBle();
   final theData = Get.put(TheData());
 
@@ -71,6 +75,9 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
+      leading: IconButton(onPressed: (){
+        Navigator.pushReplacementNamed(context, HbsPage.routeName);
+      }, icon: Icon(Icons.arrow_back_rounded)),
       title: Row(
         children: [
           Text(note.firstName),
@@ -98,94 +105,23 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(
-              scrollable: true,
-              shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-              insetPadding: EdgeInsets.all(10.0),
-              titlePadding: EdgeInsets.all(0.0),
-              titleTextStyle: TextStyle(
-                  color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
-              title: Container(
-                width: MediaQuery.of(context).size.width - 40,
-                padding: EdgeInsets.only(left: 10, bottom: 20, top: 10),
-                child: Text('New hB Entry'),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(15),
-                      topLeft: Radius.circular(15.0)),
-                ),
-              ),
-              content: Container(
-                width: MediaQuery.of(context).size.width - 40,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-
-                    SizedBox(height: 7),
-                    ListTile(
-                      leading: Icon(
-                        Icons.comment,
-                        //color: util.primaryColor,
-                      ),
-                      title: Obx(() => Text('${theData.hB}',
-                          style:TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 40,
-                              fontWeight: FontWeight.w700
-                          ))),
-                    ),
-                    SizedBox(
-                      height: 80,
-                    ),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          //ble_controller.connect(theDevice.id);
-                          Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
-                              timeInSecForIosWeb: 3);
-                          theData.readData(theDevice.id);
-
-                        },
-                        child: Text('Start Reading Data', style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w600,
-                        )),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Color.fromRGBO(93, 157, 254, 1)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                    //color: Colors.green,
-                    onPressed: () {
-                      setState(() {
-                        //Add entry logic
-                        addHBinProfile(theData.hB);
-
-                      });
-
-                      // String jd = selectedBookingList.elementAt(index).id;
-                      // CustomerCancelReq.CancelRequest(jd, 'merimarzi');
-                    },
-                    child: Text('Add New hB!')),
-                TextButton(
-                    //color: util.primaryColor,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Back'))
-              ],
-            );
-          },
+            if(theGlobalDevice != null) {
+              return AddNewHb(theFirstName: widget.fn, theProfileId: widget.profId,);
+            }
+            else{
+              return AlertDialog(
+                title: const Text('No device Connected!'),
+                content: const Text('SmartHb not connected!'),
+                actions: <Widget>[
+                  IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      })
+                ],
+              );
+            }
+            },
         );
       },
     ),
