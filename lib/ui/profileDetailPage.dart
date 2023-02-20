@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:smart_hb_app/Models/hBProfileData.dart';
 import 'package:smart_hb_app/classes/saveData.dart';
 import 'package:smart_hb_app/functionalities/ble_readData.dart';
+import 'package:smart_hb_app/functionalities/toCSV.dart';
 import 'package:smart_hb_app/globalVars.dart';
 import 'package:smart_hb_app/ui/Addnew/AddnewHb.dart';
 import 'package:smart_hb_app/ui/Menu/profiles.dart';
@@ -36,12 +37,11 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
   late HBData hBbyId;
   late List<HBData> notes;
 
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-
     refreshNote();
   }
 
@@ -50,40 +50,50 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
   final theData = Get.put(TheData());
 
   Future refreshNote() async {
+    // setState(() async{
+    //   isLoading = true;
+    //   note = await db_connection.instance.getHB(widget.fn);
+    //   //this.hBbyId = await db_connection.instance.getHBbyId(widget.profId);
+    //   notes = await db_connection.instance.getAllhBsById(widget.profId);
+    //   isLoading = false;
+    // });
     setState(() => isLoading = true);
 
-    this.note = await db_connection.instance.getHB(widget.fn);
+    note = await db_connection.instance.getHB(widget.fn);
     //this.hBbyId = await db_connection.instance.getHBbyId(widget.profId);
-    this.notes = await db_connection.instance.getAllhBsById(widget.profId);
+    notes = await db_connection.instance.getAllhBsById(widget.profId);
 
     setState(() => isLoading = false);
-
 
   }
 
   Future addHBinProfile(RxString hb) async{
     final nt = HBData(
-        firstName: widget.fn,
+        firstName: note.firstName,
         id: widget.profId, hBValue: hb.toString(),
-        age: 79,
-        gender: "In Profile",
+        age: note.age,
+        gender: note.gender,
         date: DateTime.now());
-    await db_connection.instance.createHb(nt).then((value) => Fluttertoast.showToast(msg: 'hB Added!!! ${value.id}',
+    await db_connection.instance.createHb(nt).then((value) => Fluttertoast.showToast(msg: 'Hb Added!!! ${value.id}',
         timeInSecForIosWeb: 2));
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
+      actions: [deleteButton()],
       leading: IconButton(onPressed: (){
         Navigator.pushReplacementNamed(context, HbsPage.routeName);
-      }, icon: Icon(Icons.arrow_back_rounded)),
+      }, icon: const Icon(Icons.arrow_back_rounded)),
       title: Row(
         children: [
-          Text(note.firstName),
+          Text(isLoading ? "Name" : note.firstName),
+          const SizedBox(
+            width: 7,
+          ),
           Column(children: [
-            Text("Gender: ${note.gender}"),
-            Text("Age: ${note.age}"),
+            Text(isLoading ? "Gender" : "Gender: ${note.gender}"),
+            Text(isLoading ? "Age" : "Age: ${note.age}"),
           ],)
         ],
       ),
@@ -97,7 +107,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
     ),
     floatingActionButton: FloatingActionButton(
       backgroundColor: Colors.green,
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
       onPressed: () async {
         // await Navigator.of(context).push(
         //   MaterialPageRoute(builder: (context) => AddEditProfile(fn: widget.fn, profId: widget.profId,)),
@@ -106,7 +116,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
           context: context,
           builder: (BuildContext context) {
             if(theGlobalDevice != null) {
-              return AddNewHb(theFirstName: widget.fn, theProfileId: widget.profId,);
+              return AddNewHb(theFirstName: widget.fn, theProfileId: widget.profId, theAge: note.age, theGender: note.gender,);
             }
             else{
               return AlertDialog(
@@ -126,12 +136,12 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
       },
     ),
     body: isLoading
-        ? Center(child: CircularProgressIndicator())
+        ? const Center(child: CircularProgressIndicator())
         : buildNotes(),
   );
 
   Widget editButton() => IconButton(
-      icon: Icon(Icons.edit_outlined),
+      icon: const Icon(Icons.edit_outlined),
       onPressed: () async {
         if (isLoading) return;
 
@@ -143,21 +153,51 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
       });
 
   Widget deleteButton() => IconButton(
-    icon: Icon(Icons.delete),
+    icon: const Icon(Icons.import_export_outlined),
     onPressed: () async {
       //await db_connection.instance.delete(widget.noteId);
 
-      Navigator.of(context).pop();
+      //Navigator.of(context).pop();
+
+      setState(() {
+        fileName = note.firstName;
+        employeeData  = <List<dynamic>>[];
+
+        for (int i = 0; i <notes.length ;i++) {
+
+//row refer to each column of a row in csv file and rows refer to each row in a file
+          List<dynamic> row = [];
+          row.add(notes[i].firstName);
+          row.add(notes[i].age);
+          row.add(notes[i].gender);
+          row.add(notes[i].date);
+          row.add(notes[i].hBValue);
+
+          //employeeData.clear();
+          employeeData.add(row);
+        }
+
+        getCsv();
+
+        String msg = "Data Exported Exported Successfully!";
+
+        Fluttertoast.showToast(msg: msg,
+            timeInSecForIosWeb: 2);
+      });
+
+
     },
   );
 
-  Widget buildNotes() => StaggeredGridView.countBuilder(
-    padding: EdgeInsets.all(2),
+  Widget buildNotes() =>
+      StaggeredGridView.countBuilder(
+    padding: const EdgeInsets.all(2),
     itemCount: notes.length,
-    staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+    staggeredTileBuilder: (index) => const StaggeredTile.fit(1),
     crossAxisCount: 1,
     mainAxisSpacing: 0,
     crossAxisSpacing: 2,
+    shrinkWrap: true,
     itemBuilder: (context, index) {
       final note = notes[index];
 

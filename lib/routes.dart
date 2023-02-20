@@ -13,7 +13,7 @@ import 'globalVars.dart';
 final Map<String, WidgetBuilder> routes = {
   HbsPage.routeName: (context) => HbsPage(),
   ProfileScreen.routeName: (context) => const ProfileScreen(),
-  dataScreen.routeName: (context) => dataScreen(thedevice: theGlobalDevice),
+  dataScreen.routeName: (context) => dataScreen(thedevice: theGlobalDevice!),
   DeviceListScreen.routeName: (context) => const DeviceListScreen(),
   HomeScreen.routeName: (context) => const HomeScreen(),
   // CompleteProfileScreen.routeName: (context) => CompleteProfileScreen(),

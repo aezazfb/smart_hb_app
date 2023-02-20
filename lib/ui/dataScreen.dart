@@ -69,9 +69,11 @@ class _dataScreenState extends State<dataScreen> {
   }
 
   Future addProfile(RxString hb) async{
+    int age = lastnameController.text.isEmpty ? 79 : int.parse(lastnameController.text);
+    String fname = firstnameController.text.isEmpty ? 'Patient' : firstnameController.text;
     final nt = HBData(
-        firstName: firstnameController.text.isEmpty ? 'testdata' : firstnameController.text,
-        age: lastnameController.text.isEmpty ? 79 : int.parse(lastnameController.text),
+        firstName: fname,
+        age: age,
         gender: dropdownValue, //genderController.text.isEmpty ? "Other" : genderController.text,
         hBValue: "ValueAdded",
         date: DateTime.now());
@@ -81,19 +83,19 @@ class _dataScreenState extends State<dataScreen> {
     HBData idAdded = await db_connection.instance.create(nt);
     Fluttertoast.showToast(msg: '${idAdded.firstName} Profile Added!!! ', timeInSecForIosWeb: 3);
 
-    addHB(hb, idAdded.id);
+    addHB(hb, idAdded.id, age, fname, dropdownValue);
     return idAdded.id;
 
   }
 
-  Future addHB(RxString hb, int? pid) async{
+  Future addHB(RxString hb, int? pid, int age, String fname, String gender) async{
     final nt = HBData(
-        firstName: firstnameController.text.isEmpty ? 'testdata' : firstnameController.text,
-        id: pid, hBValue: hb.toString(),
-        age: 79,
-        gender: "In Profile",
+        firstName: fname,
+        id: pid, hBValue: "$hb",
+        age: age,
+        gender: gender,
         date: DateTime.now());
-    await db_connection.instance.createHb(nt).then((value) => Fluttertoast.showToast(msg: 'hB Added!!! ${value.id}',
+    await db_connection.instance.createHb(nt).then((value) => Fluttertoast.showToast(msg: 'Hb Added!!! ${value.id}',
         timeInSecForIosWeb: 2));
   }
 
@@ -111,7 +113,7 @@ class _dataScreenState extends State<dataScreen> {
   static const List<String> list = <String>['Male', 'Female', 'Other'];
   String dropdownValue = list.first;
 
-  bool isSaveBtnDisabled = false;
+
 
 
   // void readData(dev) async{
@@ -135,7 +137,7 @@ class _dataScreenState extends State<dataScreen> {
     });
   }
   bool saveVisibility = false;
-  bool readingData = false;
+  // bool readingData = false;
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +151,7 @@ class _dataScreenState extends State<dataScreen> {
             leading: IconButton(onPressed: (){
               Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
             }, icon: const Icon(Icons.arrow_back_rounded),
-            color: themeBtnColour,),
+            color: Colors.white70,),
           ),
           backgroundColor: Colors.white,
           body: Padding(
@@ -163,7 +165,7 @@ class _dataScreenState extends State<dataScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Obx(() => Text(theData.hB != ' ' ? '${theData.hB}' : "Let's Read",
+                        Obx(() => Text(theData.hB != ' ' ? '${theData.hB} g/dL' : "Let's Read",
                             style:const TextStyle(
                                 fontFamily: themeFont,
                                 fontSize: 40,
@@ -181,7 +183,7 @@ class _dataScreenState extends State<dataScreen> {
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: const [
                         // Text('Hb', style: TextStyle(
                         //     fontFamily: 'Montserrat',
                         //     fontSize: 40,

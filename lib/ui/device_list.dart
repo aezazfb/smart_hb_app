@@ -194,19 +194,41 @@ class _DeviceListState extends State<_DeviceList> {
                           // _connect_it(device.id);
                           // Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
                           //     timeInSecForIosWeb: 3);
-                          if(isConnected){
+                          if(deviceConnected == true){
                             // my disconnect condition
-                            _disconnect_it(device.id);
-                            Fluttertoast.showToast(msg: 'Disconnected ${device.name}!',
+                            _disconnect_it(theGlobalDevice!.id);
+                            Fluttertoast.showToast(msg: 'Disconnected ${theGlobalDevice!.name}!',
                                 timeInSecForIosWeb: 3);
+                            setState(() {
+                              theGlobalDevice = null;
+                              //theGlobalDevice = device;
+                              deviceConnected = false;
+                            });
+
+                            if(theGlobalDevice != null){
+                              _connect_it(device.id);
+                              Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
+                                  timeInSecForIosWeb: 3);
+                              setState(() {
+                                theGlobalDevice = null;
+                                theGlobalDevice = device;
+                                deviceConnected = true;
+                              });
+                            }
+
                           }
                           else{
+                            if(theGlobalDevice != null){
+                              _disconnect_it(theGlobalDevice!.id);
+                            }
                             _connect_it(device.id);
                             Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
                                 timeInSecForIosWeb: 3);
 
                             setState(() {
+                              theGlobalDevice = null;
                               theGlobalDevice = device;
+                              deviceConnected = true;
                             });
 
                             Navigator.pushReplacementNamed(context, ProfileScreen.routeName);

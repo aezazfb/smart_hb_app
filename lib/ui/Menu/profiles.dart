@@ -17,7 +17,7 @@ class HbsPage extends StatefulWidget {
 
 class _HbsPageState extends State<HbsPage> {
   late List<HBData> notes;
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -48,18 +48,18 @@ class _HbsPageState extends State<HbsPage> {
       leading: IconButton(onPressed: (){
         Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
       }, icon: const Icon(Icons.arrow_back_rounded),
-        color: themeBtnColour,),
+        color: Colors.white70,),
       title: const Text(
-        'hB Profiles',
+        'Profiles',
         style: TextStyle(fontSize: 24),
       ),
      // actions: [Icon(Icons.search), SizedBox(width: 12)],
     ),
     body: Center(
       child: isLoading
-          ? CircularProgressIndicator()
+          ? const CircularProgressIndicator()
           : notes.isEmpty
-          ? Text(
+          ? const Text(
         'No Profile Stored',
         style: TextStyle(color: Colors.white, fontSize: 24),
       )
@@ -67,11 +67,29 @@ class _HbsPageState extends State<HbsPage> {
     ),
     floatingActionButton: FloatingActionButton(
       backgroundColor: themeBgColour,
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
       onPressed: () async {
-        await Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => dataScreen(thedevice: theGlobalDevice)),
-        );
+        // await Navigator.of(context).push(
+        //   MaterialPageRoute(builder: (context) => dataScreen(thedevice: theGlobalDevice!)),
+        // );
+        if(theGlobalDevice != null) {
+          Navigator.pushReplacementNamed(context, dataScreen.routeName);
+        }
+        else{
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('No Device Found!'),
+                content: const Text('Device required to add new profile.'),
+                actions: <Widget>[
+                  IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      })
+                ],
+              ));
+        }
 
         refreshNotes();
       },
@@ -79,9 +97,9 @@ class _HbsPageState extends State<HbsPage> {
   );
 
   Widget buildNotes() => StaggeredGridView.countBuilder(
-    padding: EdgeInsets.all(8),
+    padding: const EdgeInsets.all(8),
     itemCount: notes.length,
-    staggeredTileBuilder: (index) => StaggeredTile.fit(2),
+    staggeredTileBuilder: (index) => const StaggeredTile.fit(2),
     crossAxisCount: 4,
     mainAxisSpacing: 4,
     crossAxisSpacing: 4,

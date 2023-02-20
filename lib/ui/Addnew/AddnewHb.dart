@@ -8,23 +8,32 @@ import 'package:smart_hb_app/globalVars.dart';
 import 'package:smart_hb_app/classes/saveData.dart';
 
 
-class AddNewHb extends StatelessWidget {
+class AddNewHb extends StatefulWidget {
 
   final String theFirstName;
   final int? theProfileId;
+  final int? theAge;
+  final String? theGender;
 
-   AddNewHb({Key? key, required this.theFirstName, this.theProfileId}) : super(key: key);
 
-  final DiscoveredDevice theDevice = theGlobalDevice;
+   AddNewHb({Key? key, required this.theFirstName, this.theProfileId, this.theAge, this.theGender}) : super(key: key);
+
+  @override
+  State<AddNewHb> createState() => _AddNewHbState();
+}
+
+class _AddNewHbState extends State<AddNewHb> {
+  final DiscoveredDevice theDevice = theGlobalDevice!;
+
   //final frb = FlutterReactiveBle();
   final theData = Get.put(TheData());
 
    Future addHBinProfile(RxString hb) async{
      final nt = HBData(
-         firstName: theFirstName,
-         id: theProfileId, hBValue: hb.toString(),
-         age: 79,
-         gender: "In Profile",
+         firstName: widget.theFirstName,
+         id: widget.theProfileId, hBValue: "$hb",
+         age: widget.theAge ?? 79,
+         gender: widget.theGender ?? "Human",
          date: DateTime.now());
      await db_connection.instance.createHb(nt).then((value) => Fluttertoast.showToast(msg: 'hB Added!!! ${value.id}',
          timeInSecForIosWeb: 2));
@@ -45,7 +54,7 @@ class AddNewHb extends StatelessWidget {
         padding: const EdgeInsets.only(left: 10, bottom: 20, top: 10),
         child: const Text('New Hb Entry'),
         decoration: const BoxDecoration(
-          color: Colors.green,
+          color: Colors.lightGreen,
           borderRadius: BorderRadius.only(
               topRight: Radius.circular(15),
               topLeft: Radius.circular(15.0)),
@@ -63,7 +72,7 @@ class AddNewHb extends StatelessWidget {
                 Icons.comment,
                 //color: util.primaryColor,
               ),
-              title: Obx(() => Text('${theData.hB}',
+              title: Obx(() => Text('${theData.hB} g/dL',
                   style:const TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 40,
@@ -83,12 +92,15 @@ class AddNewHb extends StatelessWidget {
                   Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
                       timeInSecForIosWeb: 3);
                   theData.readData(theDevice.id);
-
+                  setState(() {
+                    isSaveBtnDisabled = true;
+                    readingData = true;
+                  });
                 },
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(const Color.fromRGBO(93, 157, 254, 1)),
+                  backgroundColor: MaterialStateProperty.all(themeBtnColour),
                 ),
-                child: const Text('Start Reading Data', style: TextStyle(
+                child:  Text(!readingData ? 'Start Reading Data' : 'Reading Data!', style: const TextStyle(
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600,
                 )),
@@ -110,7 +122,7 @@ class AddNewHb extends StatelessWidget {
               // String jd = selectedBookingList.elementAt(index).id;
               // CustomerCancelReq.CancelRequest(jd, 'merimarzi');
             },
-            child: const Text('Add New hB!')),
+            child: const Text('Add New Hb!')),
         TextButton(
           //color: util.primaryColor,
             onPressed: () {
