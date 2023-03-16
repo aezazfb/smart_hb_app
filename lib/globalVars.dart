@@ -17,3 +17,4 @@ const themeFont = 'Helvetica Regular';
 
 bool readingData = false;
 bool isSaveBtnDisabled = false;
+bool saveVisibility = true;

@@ -10,6 +10,7 @@ import 'package:smart_hb_app/functionalities/ble_readData.dart';
 import 'package:smart_hb_app/functionalities/toCSV.dart';
 import 'package:smart_hb_app/globalVars.dart';
 import 'package:smart_hb_app/ui/Addnew/AddnewHb.dart';
+import 'package:smart_hb_app/ui/Addnew/AddnewHbScreen.dart';
 import 'package:smart_hb_app/ui/Menu/profiles.dart';
 import 'package:smart_hb_app/ui/addEditProfile.dart';
 import 'package:smart_hb_app/ui/hBEntryRow_widget.dart';
@@ -116,7 +117,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
           context: context,
           builder: (BuildContext context) {
             if(theGlobalDevice != null) {
-              return AddNewHb(theFirstName: widget.fn, theProfileId: widget.profId, theAge: note.age, theGender: note.gender,);
+              return AddNewHbScreen(theFirstName: widget.fn, theProfileId: widget.profId, theAge: note.age, theGender: note.gender,);
             }
             else{
               return AlertDialog(
@@ -170,19 +171,23 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
           row.add(notes[i].firstName);
           row.add(notes[i].age);
           row.add(notes[i].gender);
-          row.add(notes[i].date);
+          row.add(DateFormat.yMMMd().format(notes[i].date));
+          row.add(DateFormat.Hms().format(notes[i].date));
           row.add(notes[i].hBValue);
 
           //employeeData.clear();
           employeeData.add(row);
         }
 
-        getCsv();
-
-        String msg = "Data Exported Exported Successfully!";
+        String msg = "Exporting Data...";
 
         Fluttertoast.showToast(msg: msg,
             timeInSecForIosWeb: 2);
+
+        getCsv(context);
+        //onShare(context, dir, fileName);
+
+
       });
 
 

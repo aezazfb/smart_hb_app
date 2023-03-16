@@ -53,6 +53,7 @@ class _dataScreenState extends State<dataScreen> {
   final theData = Get.put(TheData());
 
   bool isObsecured = true;
+  bool? textIsEmpty ;
 
   late List<HBData> theHbData;
   bool isLoading = false;
@@ -136,7 +137,7 @@ class _dataScreenState extends State<dataScreen> {
       isObsecured = !isObsecured;
     });
   }
-  bool saveVisibility = false;
+  // bool saveVisibility = false;
   // bool readingData = false;
 
   @override
@@ -162,134 +163,116 @@ class _dataScreenState extends State<dataScreen> {
                   // mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Obx(() => Text(theData.hB != ' ' ? '${theData.hB} g/dL' : "Let's Read",
-                            style:const TextStyle(
-                                fontFamily: themeFont,
-                                fontSize: 40,
-                                fontWeight: FontWeight.w700
-                            ))),
 
-                        // Text('.', style: TextStyle(
-                        //     fontFamily: 'Montserrat',
-                        //     fontSize: 40,
-                        //     fontWeight: FontWeight.w700,
-                        //     color: Color.fromRGBO(93, 157, 254, 1)
-                        // ),),
-                      ],
-                    ),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        // Text('Hb', style: TextStyle(
-                        //     fontFamily: 'Montserrat',
-                        //     fontSize: 40,
-                        //     fontWeight: FontWeight.w700,
-                        //     color: Color.fromRGBO(93, 157, 254, 1)
-                        // ),),
-
-                        // Obx(() => Text('${theData.hB}',
-                        //     style:TextStyle(
-                        //         fontFamily: 'Montserrat',
-                        //         fontSize: 40,
-                        //         fontWeight: FontWeight.w700
-                        //     ))),
-                      ],
-                    ),
-
-                    const SizedBox(
-                      height: 80,
-                    ),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-
-                        onPressed: (){
-                          //ble_controller.connect(theDevice.id);
-                          if(readingData){
-                            Fluttertoast.showToast(msg: 'Reading Already!',
-                                timeInSecForIosWeb: 2);
-                          }
-                          else{
-                            Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
-                                timeInSecForIosWeb: 3);
-                            theData.readData(theDevice.id);
-
-                            setState(() {
-                              isSaveBtnDisabled = true;
-                              readingData = true;
-                            });
-                            // myd = hbValue.value;
-                          }
-
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(themeBtnColour),
-                        ),
-                        child: Text(!readingData ? 'Start Reading Data' : 'Reading Data!', style: const TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w600,
-                        )),
-                      ),
-                    ),
-
-                    //temp profile button
-
-                    // SizedBox(
-                    //   height: 80,
-                    // ),
-                    //
-                    // SizedBox(
-                    //   width: double.infinity,
-                    //   height: 50,
-                    //   child: ElevatedButton(
-                    //     onPressed: () async {
-                    //       await Navigator.of(context).push(MaterialPageRoute(
-                    //         builder: (context) => HbsPage(),
-                    //       ));
-                    //     },
-                    //     child: Text('See Profiles', style: TextStyle(
-                    //       fontFamily: 'Montserrat',
-                    //       fontWeight: FontWeight.w600,
-                    //     )),
-                    //     style: ButtonStyle(
-                    //       backgroundColor: MaterialStateProperty.all(Color.fromRGBO(93, 157, 254, 1)),
-                    //     ),
-                    //   ),
-                    // ),
-
-                    const SizedBox(
-                      height: 10,
-                    ),
 
                     Visibility(
                       visible: isSaveBtnDisabled,
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: () async {
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Obx(() => Text(theData.hB != ' ' ? '${theData.hB} g/dL' : "Let's Read",
+                                  style:const TextStyle(
+                                      fontFamily: themeFont,
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w700
+                                  ))),
 
-                            // isSaveBtnDisabled ? addHB(theData.hB) : mytoast("Read Data First!", 3);
-                            setState(() {
-                              saveVisibility ? saveVisibility = false : saveVisibility = true;
-
-                              isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
-                            });
-                          },
-                          child: const Text('Add a Profile', style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontWeight: FontWeight.w600,
-                          )),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                              // Text('.', style: TextStyle(
+                              //     fontFamily: 'Montserrat',
+                              //     fontSize: 40,
+                              //     fontWeight: FontWeight.w700,
+                              //     color: Color.fromRGBO(93, 157, 254, 1)
+                              // ),),
+                            ],
                           ),
-                        ),
+
+
+                          const SizedBox(
+                            height: 80,
+                          ),
+
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+
+                              onPressed: (){
+                                //ble_controller.connect(theDevice.id);
+                                if(readingData == true){
+                                  Fluttertoast.showToast(msg: 'Reading Already!',
+                                      timeInSecForIosWeb: 2);
+                                }
+                                else{
+                                  Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
+                                      timeInSecForIosWeb: 3);
+                                  theData.readData(theDevice.id);
+
+                                  setState(() {
+                                    isSaveBtnDisabled = true;
+                                    readingData = true;
+                                  });
+                                  // myd = hbValue.value;
+                                }
+
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                              ),
+                              child: Text(readingData == true ? 'Reading Data!' : 'Start Reading Data', style: const TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w600,
+                              )),
+                            ),
+                          ),
+
+
+
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () async {
+
+                                // saveVisibility ? addProfile(theData.hB) : mytoast("Read Data First!", 3);
+                                addProfile(theData.hB);
+
+                                firstnameController.clear();
+                                lastnameController.clear();
+                                genderController.clear();
+
+                                setState(() {
+                                  saveVisibility == true ? saveVisibility = false : saveVisibility = true;
+
+                                  isSaveBtnDisabled == true ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                  readingData = false;
+                                  theData.hB = ' '.obs;
+                                });
+
+                                Navigator.pushReplacementNamed(context, HbsPage.routeName);
+
+                                // isSaveBtnDisabled ? addHB(theData.hB) : mytoast("Read Data First!", 3);
+                                // setState(() {
+                                //   saveVisibility ? saveVisibility = false : saveVisibility = true;
+                                //
+                                //   isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                // });
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                              ),
+                              child: const Text('Save reading!', style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w600,
+                              )),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
@@ -305,6 +288,31 @@ class _dataScreenState extends State<dataScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           TextFormField(
+                            onChanged: (x) {
+                              if (firstnameController.text.isNotEmpty && lastnameController.text.isNotEmpty) {
+                                setState(() {
+                                  textIsEmpty = false;
+                                });
+                              }
+                              else{
+                                setState(() {
+                                  textIsEmpty = true;
+                                });
+                              }
+                            },
+                            // validator: (value) {
+                            //   if (value == null || value.isEmpty) {
+                            //     //return 'Please enter some text';
+                            //     setState(() {
+                            //       textIsEmpty = false;
+                            //     });
+                            //   }
+                            //   else{
+                            //     setState(() {
+                            //       textIsEmpty = true;
+                            //     });
+                            //   }
+                            // },
                             controller: firstnameController,
                             decoration: InputDecoration(
                                 focusedBorder: const UnderlineInputBorder(
@@ -325,6 +333,30 @@ class _dataScreenState extends State<dataScreen> {
                           ),
 
                           TextFormField(
+                            onChanged: (x) {
+                              if (firstnameController.text.isNotEmpty && lastnameController.text.isNotEmpty) {
+                                setState(() {
+                                  textIsEmpty = false;
+                                });
+                              }
+                              else{
+                                setState(() {
+                                  textIsEmpty = true;
+                                });
+                              }
+                            },
+                            // validator: (value) {
+                            //   if (value == null || value.isEmpty) {
+                            //     setState(() {
+                            //       textIsEmpty = false;
+                            //     });
+                            //   }
+                            //   else{
+                            //     setState(() {
+                            //       textIsEmpty = true;
+                            //     });
+                            //   }
+                            // },
                             controller: lastnameController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
@@ -345,48 +377,7 @@ class _dataScreenState extends State<dataScreen> {
                             height: 35,
                           ),
 
-                          // TextFormField(
-                          //   controller: lastnameController,
-                          //   obscureText: isObsecured,
-                          //   decoration: InputDecoration(
-                          //       focusedBorder: UnderlineInputBorder(
-                          //         borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
-                          //       ),
-                          //       fillColor: Colors.green,
-                          //       labelText: 'PASSWORD',
-                          //       suffixIcon: IconButton(
-                          //         onPressed: ()
-                          //         {
-                          //           _Switch();
-                          //         },
-                          //         icon: Icon(isObsecured ? Icons.remove_red_eye : Icons.visibility_off),
-                          //       ),
-                          //       labelStyle: TextStyle(
-                          //           fontWeight: FontWeight.w500,
-                          //           letterSpacing: 1,
-                          //           fontFamily: 'Montserrat',
-                          //           color: Colors.grey[400],
-                          //           fontSize: 15,
-                          //       )
-                          //   ),
-                          // ),
-                          // TextFormField(
-                          //   controller: genderController,
-                          //   keyboardType: TextInputType.text,
-                          //   decoration: InputDecoration(
-                          //       focusedBorder: UnderlineInputBorder(
-                          //         borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
-                          //       ),
-                          //       labelText: 'Gender',
-                          //       labelStyle: TextStyle(
-                          //           fontFamily: 'Montserrat',
-                          //           fontWeight: FontWeight.w500,
-                          //           letterSpacing: 1,
-                          //           color: Colors.grey[400],
-                          //           fontSize: 15
-                          //       )
-                          //   ),
-                          // ),
+
                           DropdownButton<String>(
                             isExpanded: true,
 
@@ -416,114 +407,7 @@ class _dataScreenState extends State<dataScreen> {
                             height: 35,
                           ),
 
-                          // TextFormField(
-                          //   controller: entryController,
-                          //   decoration: InputDecoration(
-                          //       focusedBorder: UnderlineInputBorder(
-                          //         borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
-                          //       ),
-                          //       labelText: 'konsa',
-                          //       labelStyle: TextStyle(
-                          //           fontFamily: 'Montserrat',
-                          //           fontWeight: FontWeight.w500,
-                          //           letterSpacing: 1,
-                          //           color: Colors.grey[400],
-                          //           fontSize: 15
-                          //       )
-                          //   ),
-                          // ),
-                          // SizedBox(
-                          //   height: 35,
-                          // ),
-                          // TextButton(onPressed: (){
-                          //   showDialog(
-                          //     context: context,
-                          //     builder: (BuildContext context) {
-                          //       return AlertDialog(
-                          //         scrollable: true,
-                          //         shape:
-                          //         RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                          //         insetPadding: EdgeInsets.all(10.0),
-                          //         titlePadding: EdgeInsets.all(0.0),
-                          //         titleTextStyle: TextStyle(
-                          //             color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
-                          //         title: Container(
-                          //           width: MediaQuery.of(context).size.width - 40,
-                          //           padding: EdgeInsets.only(left: 10, bottom: 20, top: 10),
-                          //           child: Text('Cancellation Reason'),
-                          //           decoration: BoxDecoration(
-                          //             color: Colors.amberAccent,
-                          //             borderRadius: BorderRadius.only(
-                          //                 topRight: Radius.circular(15),
-                          //                 topLeft: Radius.circular(15.0)),
-                          //           ),
-                          //         ),
-                          //         content: Container(
-                          //           width: MediaQuery.of(context).size.width - 40,
-                          //           child: Column(
-                          //             mainAxisSize: MainAxisSize.min,
-                          //             children: [
-                          //
-                          //               SizedBox(height: 7),
-                          //               ListTile(
-                          //                 leading: Icon(
-                          //                   Icons.comment,
-                          //                   color: Colors.amberAccent,
-                          //                 ),
-                          //                 title: TextFormField(
-                          //                   controller: rController,
-                          //                   maxLines: 4,
-                          //                   keyboardType: TextInputType.multiline,
-                          //                   minLines: null,
-                          //                   decoration: InputDecoration(
-                          //                     border: OutlineInputBorder(
-                          //                       borderRadius: BorderRadius.circular(10.0),
-                          //                     ),
-                          //                     hintText: 'Type Reason..',
-                          //                   ),
-                          //                 ),
-                          //               ),
-                          //             ],
-                          //           ),
-                          //         ),
-                          //         actions: [
-                          //           TextButton(
-                          //               //color: util.primaryColor,
-                          //               onPressed: () {
-                          //                 setState(() {
-                          //                   if(!true){
-                          //
-                          //                   }
-                          //                   else{
-                          //                     Fluttertoast.showToast(msg: "Please type a reason of more than 5 letters..",
-                          //                         backgroundColor: Colors.red,
-                          //                         textColor: Colors.black45,
-                          //                         fontSize: 17.35);
-                          //                   }
-                          //                 });
-                          //
-                          //                 // String jd = selectedBookingList.elementAt(index).id;
-                          //                 // CustomerCancelReq.CancelRequest(jd, 'merimarzi');
-                          //               },
-                          //               child: Text('Cancel Ride!')),
-                          //           TextButton(
-                          //               //color: util.primaryColor,
-                          //               onPressed: () {
-                          //
-                          //                 Navigator.pop(context);
-                          //               },
-                          //               child: Text('Back'))
-                          //         ],
-                          //       );
-                          //     },
-                          //   );
-                          // },
-                          //     child: Text('Forget Password?', style: TextStyle(
-                          //         fontFamily: 'Montserrat',
-                          //         fontWeight: FontWeight.w500,
-                          //         color: Colors.grey[400]
-                          //     ),)
-                          // ),
+
 
                           const SizedBox(
                             height: 40,
@@ -536,30 +420,27 @@ class _dataScreenState extends State<dataScreen> {
                             height: 50,
                             child: ElevatedButton(
                               onPressed: () async {
-                               saveVisibility ? addProfile(theData.hB) : mytoast("Read Data First!", 3);
+                                if(textIsEmpty == false){
+                                  setState(() {
+                                    saveVisibility ? saveVisibility = false : saveVisibility = true;
 
-                               firstnameController.clear();
-                               lastnameController.clear();
-                               genderController.clear();
+                                    isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                  });
+                                }
+                                else {
+                                  mytoast("Name/Age required!", 3);
+                                }
 
-                               setState(() {
-                                 saveVisibility ? saveVisibility = false : saveVisibility = true;
 
-                                 isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
-                                 readingData = false;
-                                 theData.hB = ' '.obs;
-                               });
-
-                               Navigator.pushReplacementNamed(context, HbsPage.routeName);
 
                               },
-                              child: const Text('Save!', style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w600,
-                              )),
                               style: ButtonStyle(
                                 backgroundColor: MaterialStateProperty.all(themeBtnColour),
                               ),
+                              child: const Text('Next ', style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w600,
+                              )),
                             ),
                           ),
                           const SizedBox(
@@ -571,21 +452,15 @@ class _dataScreenState extends State<dataScreen> {
                             height: 50,
                             child: ElevatedButton(
                               onPressed: () async {
-
-                                // isSaveBtnDisabled ? addHB(theData.hB) : mytoast("Read Data First!", 3);
-                                setState(() {
-                                  saveVisibility ? saveVisibility = false : saveVisibility = true;
-
-                                  isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
-                                });
+                                Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
                               },
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                              ),
                               child: const Text('Cancel', style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.w600,
                               )),
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(themeBtnColour),
-                              ),
                             ),
                           ),
 

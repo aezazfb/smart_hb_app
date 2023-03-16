@@ -1,8 +1,11 @@
 import 'dart:io';
 
 import 'package:csv/csv.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// Convert a map list to csv
 // String? mapListToCsv(List<Map<String, Object?>>? mapList,
@@ -48,14 +51,14 @@ import 'package:permission_handler/permission_handler.dart';
 
 late List<List<dynamic>> employeeData;
 late String fileName;
-
-getCsv() async {
+late String dir;
+getCsv(BuildContext context) async {
 
   if (await Permission.storage.request().isGranted) {
 
 //store file in documents folder
 
-    String dir = "${(await getExternalStorageDirectory())!.path}/$fileName.csv";
+     dir = "${(await getExternalStorageDirectory())!.path}/$fileName.csv";
     String file = "$dir";
 
     File f = new File(file);
@@ -63,11 +66,38 @@ getCsv() async {
 // convert rows to String and write as csv file
 
     String csv = const ListToCsvConverter().convert(employeeData);
-    f.writeAsString(csv);
+    f.writeAsString(csv).then((value) async {
+    await onShare(context, dir, fileName);
+
+
+    });
   }else{
 
     Map<Permission, PermissionStatus> statuses = await [
       Permission.storage,
     ].request();
   }
+}
+
+onShare(BuildContext context, String fPath, String fileName) async {
+  // A builder is used to retrieve the context immediately
+  // surrounding the ElevatedButton.
+  //
+  // The context's `findRenderObject` returns the first
+  // RenderObject in its descendent tree when it's not
+  // a RenderObjectWidget. The ElevatedButton's RenderObject
+  // has its position and size after it's built.
+  final box = context.findRenderObject() as RenderBox?;
+  final files = <XFile>[];
+  files.add(XFile(fPath, name: fileName));
+  await Share.shareXFiles(files,
+      text: "$fileName's Hb Data.",
+      subject: "$fileName's Hb Data",
+      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size).then((value)
+  {
+    String msg = "Data Exported Successfully!";
+    Fluttertoast.showToast(msg: msg,
+        timeInSecForIosWeb: 2);
+  });
+
 }

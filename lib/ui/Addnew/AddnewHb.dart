@@ -35,7 +35,7 @@ class _AddNewHbState extends State<AddNewHb> {
          age: widget.theAge ?? 79,
          gender: widget.theGender ?? "Human",
          date: DateTime.now());
-     await db_connection.instance.createHb(nt).then((value) => Fluttertoast.showToast(msg: 'hB Added!!! ${value.id}',
+     await db_connection.instance.createHb(nt).then((value) => Fluttertoast.showToast(msg: 'Hb Added!!!',
          timeInSecForIosWeb: 2));
    }
 
@@ -100,7 +100,7 @@ class _AddNewHbState extends State<AddNewHb> {
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(themeBtnColour),
                 ),
-                child:  Text(!readingData ? 'Start Reading Data' : 'Reading Data!', style: const TextStyle(
+                child:  Text(readingData == false ? 'Start Reading Data' : 'Reading Data!', style: const TextStyle(
                   fontFamily: 'Montserrat',
                   fontWeight: FontWeight.w600,
                 )),

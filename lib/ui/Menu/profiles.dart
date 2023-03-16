@@ -73,6 +73,9 @@ class _HbsPageState extends State<HbsPage> {
         //   MaterialPageRoute(builder: (context) => dataScreen(thedevice: theGlobalDevice!)),
         // );
         if(theGlobalDevice != null) {
+          readingData = false;
+          isSaveBtnDisabled = false;
+          saveVisibility = true;
           Navigator.pushReplacementNamed(context, dataScreen.routeName);
         }
         else{
