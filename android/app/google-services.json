@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "506175106141",
+    "project_id": "smarthb-login",
+    "storage_bucket": "smarthb-login.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:506175106141:android:edfa5800af7046d375b1b4",
+        "android_client_info": {
+          "package_name": "www.codigowidgets.com.smart_hb_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "506175106141-jvuhv419utem3sh2d76llb7sso69n293.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPOy68CfxEyq5a2GOB6Oa9xg8j9yVuREI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "506175106141-jvuhv419utem3sh2d76llb7sso69n293.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

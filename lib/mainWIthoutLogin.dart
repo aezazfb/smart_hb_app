@@ -20,7 +20,6 @@ import 'package:smart_hb_app/ui/dataScreen.dart';
 import 'package:smart_hb_app/ui/device_list.dart';
 // import 'package:myble2/src/ui/device_list.dart';
 import 'package:provider/provider.dart';
-import "package:firebase_core/firebase_core.dart";
 
 import 'package:smart_hb_app/functionalities/ble_logger.dart';
 import 'package:smart_hb_app/ui/splashscreen.dart';
@@ -28,9 +27,8 @@ import 'package:smart_hb_app/ui/splashscreen.dart';
 
 const _themeColor = Colors.green;
 
-Future main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
 
   final _bleLogger = BleLogger();
   final _ble = FlutterReactiveBle();
@@ -51,9 +49,6 @@ Future main() async {
     subscribeToCharacteristic: _ble.subscribeToCharacteristic,
     logMessage: _bleLogger.addToLog,
   );
-
-  final navKey = GlobalKey<NavigatorState>();
-
   runApp(
     MultiProvider(
       providers: [
@@ -82,7 +77,7 @@ Future main() async {
           ),
         ),
       ],
-      child: MaterialApp(navigatorKey: navKey,
+      child: MaterialApp(
         title: 'SmartHb',
         color: _themeColor,
         theme: ThemeData(primarySwatch: _themeColor),

@@ -11,11 +11,11 @@ class BleStatusScreen extends StatelessWidget {
       case BleStatus.unsupported:
         return "This device does not support Bluetooth";
       case BleStatus.unauthorized:
-        return "Authorize the FlutterReactiveBle example app to use Bluetooth and location";
+        return "Authorise the SmartHb app to use Bluetooth";
       case BleStatus.poweredOff:
         return "Bluetooth is powered off on your device turn it on";
-      case BleStatus.locationServicesDisabled:
-        return "Enable location services";
+      // case BleStatus.locationServicesDisabled:
+      //   return "Enable location services";
       case BleStatus.ready:
         return "Bluetooth is up and running";
       default:
