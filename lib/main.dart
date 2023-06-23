@@ -30,7 +30,7 @@ const _themeColor = Colors.green;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  //await Firebase.initializeApp();
 
   final _bleLogger = BleLogger();
   final _ble = FlutterReactiveBle();

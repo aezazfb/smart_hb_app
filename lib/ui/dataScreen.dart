@@ -143,354 +143,360 @@ class _dataScreenState extends State<dataScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: themeBgColour,
-            leading: IconButton(onPressed: (){
-              Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
-            }, icon: const Icon(Icons.arrow_back_rounded),
-            color: Colors.white70,),
-          ),
-          backgroundColor: Colors.white,
-          body: Padding(
-            padding: const EdgeInsets.all(25.0),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+        return true;
+      },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: themeBgColour,
+              leading: IconButton(onPressed: (){
+                Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+              }, icon: const Icon(Icons.arrow_back_rounded),
+              color: Colors.white70,),
+            ),
+            backgroundColor: Colors.white,
+            body: Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
 
 
-                    Visibility(
-                      visible: isSaveBtnDisabled,
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Obx(() => Text(theData.hB != ' ' ? '${theData.hB} g/dL' : "Let's Read",
-                                  style:const TextStyle(
-                                      fontFamily: themeFont,
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w700
-                                  ))),
+                      Visibility(
+                        visible: isSaveBtnDisabled,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Obx(() => Text(theData.hB != ' ' ? '${theData.hB} g/dL' : "Let's Read",
+                                    style:const TextStyle(
+                                        fontFamily: themeFont,
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w700
+                                    ))),
 
-                              // Text('.', style: TextStyle(
-                              //     fontFamily: 'Montserrat',
-                              //     fontSize: 40,
-                              //     fontWeight: FontWeight.w700,
-                              //     color: Color.fromRGBO(93, 157, 254, 1)
-                              // ),),
-                            ],
-                          ),
+                                // Text('.', style: TextStyle(
+                                //     fontFamily: 'Montserrat',
+                                //     fontSize: 40,
+                                //     fontWeight: FontWeight.w700,
+                                //     color: Color.fromRGBO(93, 157, 254, 1)
+                                // ),),
+                              ],
+                            ),
 
 
-                          const SizedBox(
-                            height: 80,
-                          ),
+                            const SizedBox(
+                              height: 80,
+                            ),
 
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
 
-                              onPressed: (){
-                                //ble_controller.connect(theDevice.id);
-                                if(readingData == true){
-                                  Fluttertoast.showToast(msg: 'Reading Already!',
-                                      timeInSecForIosWeb: 2);
+                                onPressed: (){
+                                  //ble_controller.connect(theDevice.id);
+                                  if(readingData == true){
+                                    Fluttertoast.showToast(msg: 'Reading Already!',
+                                        timeInSecForIosWeb: 2);
+                                  }
+                                  else{
+                                    Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
+                                        timeInSecForIosWeb: 3);
+                                    theData.readData(theDevice.id);
+
+                                    setState(() {
+                                      isSaveBtnDisabled = true;
+                                      readingData = true;
+                                    });
+                                    // myd = hbValue.value;
+                                  }
+
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                                ),
+                                child: Text(readingData == true ? 'Reading Data!' : 'Start Reading Data', style: const TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                )),
+                              ),
+                            ),
+
+
+
+                            const SizedBox(
+                              height: 10,
+                            ),
+
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: () async {
+
+                                  // saveVisibility ? addProfile(theData.hB) : mytoast("Read Data First!", 3);
+                                  addProfile(theData.hB);
+
+                                  firstnameController.clear();
+                                  lastnameController.clear();
+                                  genderController.clear();
+
+                                  setState(() {
+                                    saveVisibility == true ? saveVisibility = false : saveVisibility = true;
+
+                                    isSaveBtnDisabled == true ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                    readingData = false;
+                                    theData.hB = ' '.obs;
+                                  });
+
+                                  Navigator.pushReplacementNamed(context, HbsPage.routeName);
+
+                                  // isSaveBtnDisabled ? addHB(theData.hB) : mytoast("Read Data First!", 3);
+                                  // setState(() {
+                                  //   saveVisibility ? saveVisibility = false : saveVisibility = true;
+                                  //
+                                  //   isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                  // });
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                                ),
+                                child: const Text('Save reading!', style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                )),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 80,
+                      ),
+
+                      // Save data UI
+
+                      Visibility(
+                        visible: saveVisibility,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            TextFormField(
+                              onChanged: (x) {
+                                if (firstnameController.text.isNotEmpty && lastnameController.text.isNotEmpty) {
+                                  setState(() {
+                                    textIsEmpty = false;
+                                  });
                                 }
                                 else{
-                                  Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
-                                      timeInSecForIosWeb: 3);
-                                  theData.readData(theDevice.id);
-
                                   setState(() {
-                                    isSaveBtnDisabled = true;
-                                    readingData = true;
+                                    textIsEmpty = true;
                                   });
-                                  // myd = hbValue.value;
                                 }
-
                               },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(themeBtnColour),
-                              ),
-                              child: Text(readingData == true ? 'Reading Data!' : 'Start Reading Data', style: const TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w600,
-                              )),
-                            ),
-                          ),
-
-
-
-                          const SizedBox(
-                            height: 10,
-                          ),
-
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () async {
-
-                                // saveVisibility ? addProfile(theData.hB) : mytoast("Read Data First!", 3);
-                                addProfile(theData.hB);
-
-                                firstnameController.clear();
-                                lastnameController.clear();
-                                genderController.clear();
-
-                                setState(() {
-                                  saveVisibility == true ? saveVisibility = false : saveVisibility = true;
-
-                                  isSaveBtnDisabled == true ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
-                                  readingData = false;
-                                  theData.hB = ' '.obs;
-                                });
-
-                                Navigator.pushReplacementNamed(context, HbsPage.routeName);
-
-                                // isSaveBtnDisabled ? addHB(theData.hB) : mytoast("Read Data First!", 3);
-                                // setState(() {
-                                //   saveVisibility ? saveVisibility = false : saveVisibility = true;
-                                //
-                                //   isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
-                                // });
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(themeBtnColour),
-                              ),
-                              child: const Text('Save reading!', style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w600,
-                              )),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(
-                      height: 80,
-                    ),
-
-                    // Save data UI
-
-                    Visibility(
-                      visible: saveVisibility,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          TextFormField(
-                            onChanged: (x) {
-                              if (firstnameController.text.isNotEmpty && lastnameController.text.isNotEmpty) {
-                                setState(() {
-                                  textIsEmpty = false;
-                                });
-                              }
-                              else{
-                                setState(() {
-                                  textIsEmpty = true;
-                                });
-                              }
-                            },
-                            // validator: (value) {
-                            //   if (value == null || value.isEmpty) {
-                            //     //return 'Please enter some text';
-                            //     setState(() {
-                            //       textIsEmpty = false;
-                            //     });
-                            //   }
-                            //   else{
-                            //     setState(() {
-                            //       textIsEmpty = true;
-                            //     });
-                            //   }
-                            // },
-                            controller: firstnameController,
-                            decoration: InputDecoration(
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
-                                ),
-                              labelText: 'Person Name',
-                              labelStyle: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 1,
-                                color: Colors.grey[400],
-                                fontSize: 15
-                              )
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 35,
-                          ),
-
-                          TextFormField(
-                            onChanged: (x) {
-                              if (firstnameController.text.isNotEmpty && lastnameController.text.isNotEmpty) {
-                                setState(() {
-                                  textIsEmpty = false;
-                                });
-                              }
-                              else{
-                                setState(() {
-                                  textIsEmpty = true;
-                                });
-                              }
-                            },
-                            // validator: (value) {
-                            //   if (value == null || value.isEmpty) {
-                            //     setState(() {
-                            //       textIsEmpty = false;
-                            //     });
-                            //   }
-                            //   else{
-                            //     setState(() {
-                            //       textIsEmpty = true;
-                            //     });
-                            //   }
-                            // },
-                            controller: lastnameController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
-                                ),
-                                labelText: 'Age',
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     //return 'Please enter some text';
+                              //     setState(() {
+                              //       textIsEmpty = false;
+                              //     });
+                              //   }
+                              //   else{
+                              //     setState(() {
+                              //       textIsEmpty = true;
+                              //     });
+                              //   }
+                              // },
+                              controller: firstnameController,
+                              decoration: InputDecoration(
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
+                                  ),
+                                labelText: 'Person Name',
                                 labelStyle: TextStyle(
                                     fontFamily: 'Montserrat',
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 1,
-                                    color: Colors.grey[400],
-                                    fontSize: 15
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 1,
+                                  color: Colors.grey[400],
+                                  fontSize: 15
                                 )
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 35,
-                          ),
-
-
-                          DropdownButton<String>(
-                            isExpanded: true,
-
-                            value: dropdownValue,
-                            icon: const Icon(Icons.arrow_downward),
-                            elevation: 16,
-                            style: const TextStyle(color: Colors.lightGreen),
-                            underline: Container(
-                              height: 2,
-                              color: Colors.lightGreenAccent,
+                            const SizedBox(
+                              height: 35,
                             ),
-                            onChanged: (String? value) {
-                              // This is called when the user selects an item.
-                              setState(() {
-                                dropdownValue = value!;
-                              });
-                            },
-                            items: list.map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
 
-                          const SizedBox(
-                            height: 35,
-                          ),
-
-
-
-                          const SizedBox(
-                            height: 40,
-                          ),
-
-
-                          //MyButton Az
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if(textIsEmpty == false){
+                            TextFormField(
+                              onChanged: (x) {
+                                if (firstnameController.text.isNotEmpty && lastnameController.text.isNotEmpty) {
                                   setState(() {
-                                    saveVisibility ? saveVisibility = false : saveVisibility = true;
-
-                                    isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                    textIsEmpty = false;
                                   });
                                 }
-                                else {
-                                  mytoast("Name/Age required!", 3);
+                                else{
+                                  setState(() {
+                                    textIsEmpty = true;
+                                  });
                                 }
-
-
-
                               },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                              // validator: (value) {
+                              //   if (value == null || value.isEmpty) {
+                              //     setState(() {
+                              //       textIsEmpty = false;
+                              //     });
+                              //   }
+                              //   else{
+                              //     setState(() {
+                              //       textIsEmpty = true;
+                              //     });
+                              //   }
+                              // },
+                              controller: lastnameController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Color.fromRGBO(93, 157, 254, 1)),
+                                  ),
+                                  labelText: 'Age',
+                                  labelStyle: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 1,
+                                      color: Colors.grey[400],
+                                      fontSize: 15
+                                  )
                               ),
-                              child: const Text('Next ', style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w600,
-                              )),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                            const SizedBox(
+                              height: 35,
+                            ),
 
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+
+                            DropdownButton<String>(
+                              isExpanded: true,
+
+                              value: dropdownValue,
+                              icon: const Icon(Icons.arrow_downward),
+                              elevation: 16,
+                              style: const TextStyle(color: Colors.lightGreen),
+                              underline: Container(
+                                height: 2,
+                                color: Colors.lightGreenAccent,
+                              ),
+                              onChanged: (String? value) {
+                                // This is called when the user selects an item.
+                                setState(() {
+                                  dropdownValue = value!;
+                                });
                               },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(themeBtnColour),
-                              ),
-                              child: const Text('Cancel', style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w600,
-                              )),
+                              items: list.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
                             ),
-                          ),
 
-                          const SizedBox(
-                            height: 10,
-                          ),
+                            const SizedBox(
+                              height: 35,
+                            ),
 
 
-                        ],
+
+                            const SizedBox(
+                              height: 40,
+                            ),
+
+
+                            //MyButton Az
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  if(textIsEmpty == false){
+                                    setState(() {
+                                      saveVisibility ? saveVisibility = false : saveVisibility = true;
+
+                                      isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                    });
+                                  }
+                                  else {
+                                    mytoast("Name/Age required!", 3);
+                                  }
+
+
+
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                                ),
+                                child: const Text('Next ', style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                )),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                                ),
+                                child: const Text('Cancel', style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w600,
+                                )),
+                              ),
+                            ),
+
+                            const SizedBox(
+                              height: 10,
+                            ),
+
+
+                          ],
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(
-                      height: 40,
-                    ),
+                      const SizedBox(
+                        height: 40,
+                      ),
 
-                    // isLoading ? CircularProgressIndicator() :
-                    // ElevatedButton(onPressed: (){
-                    //   refreshHbs();
-                    //   Fluttertoast.showToast(msg: '${theHbData[int.parse(entryController.text)].firstName} ${theHbData[int.parse(entryController.text)].hBValue} ' + DateFormat.yMMMd().format(theHbData[int.parse(entryController.text)].date),
-                    //       timeInSecForIosWeb: 3);
-                    // }, child: Text('Pop it')),
+                      // isLoading ? CircularProgressIndicator() :
+                      // ElevatedButton(onPressed: (){
+                      //   refreshHbs();
+                      //   Fluttertoast.showToast(msg: '${theHbData[int.parse(entryController.text)].firstName} ${theHbData[int.parse(entryController.text)].hBValue} ' + DateFormat.yMMMd().format(theHbData[int.parse(entryController.text)].date),
+                      //       timeInSecForIosWeb: 3);
+                      // }, child: Text('Pop it')),
 
-                    const SizedBox(
-                      height: 50,
-                    ),
+                      const SizedBox(
+                        height: 50,
+                      ),
 
-                    const Text('SmartHb Application'),
+                      const Text('SmartHb Application'),
 
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

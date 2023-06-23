@@ -42,60 +42,66 @@ class _HbsPageState extends State<HbsPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      backgroundColor: themeBgColour,
-      leading: IconButton(onPressed: (){
-        Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
-      }, icon: const Icon(Icons.arrow_back_rounded),
-        color: Colors.white70,),
-      title: const Text(
-        'Profiles',
-        style: TextStyle(fontSize: 24),
+  Widget build(BuildContext context) => WillPopScope(
+    onWillPop: () async {
+      Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+      return true;
+    },
+    child: Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.cyan,
+        leading: IconButton(onPressed: (){
+          Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+        }, icon: const Icon(Icons.arrow_back_rounded),
+          color: Colors.white70,),
+        title: const Text(
+          'Profiles',
+          style: TextStyle(fontSize: 24),
+        ),
+       // actions: [Icon(Icons.search), SizedBox(width: 12)],
       ),
-     // actions: [Icon(Icons.search), SizedBox(width: 12)],
-    ),
-    body: Center(
-      child: isLoading
-          ? const CircularProgressIndicator()
-          : notes.isEmpty
-          ? const Text(
-        'No Profile Stored',
-        style: TextStyle(color: Colors.white, fontSize: 24),
-      )
-          : buildNotes(),
-    ),
-    floatingActionButton: FloatingActionButton(
-      backgroundColor: themeBgColour,
-      child: const Icon(Icons.add),
-      onPressed: () async {
-        // await Navigator.of(context).push(
-        //   MaterialPageRoute(builder: (context) => dataScreen(thedevice: theGlobalDevice!)),
-        // );
-        if(theGlobalDevice != null) {
-          readingData = false;
-          isSaveBtnDisabled = false;
-          saveVisibility = true;
-          Navigator.pushReplacementNamed(context, dataScreen.routeName);
-        }
-        else{
-          showDialog(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                title: const Text('No Device Found!'),
-                content: const Text('Device required to add new profile.'),
-                actions: <Widget>[
-                  IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ],
-              ));
-        }
+      body: Center(
+        child: isLoading
+            ? const CircularProgressIndicator()
+            : notes.isEmpty
+            ? const Text(
+          'No Profile Stored',
+          style: TextStyle(color: Colors.white, fontSize: 24),
+        )
+            : buildNotes(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: themeBgColour,
+        child: const Icon(Icons.add),
+        onPressed: () async {
+          // await Navigator.of(context).push(
+          //   MaterialPageRoute(builder: (context) => dataScreen(thedevice: theGlobalDevice!)),
+          // );
+          if(theGlobalDevice != null) {
+            readingData = false;
+            isSaveBtnDisabled = false;
+            saveVisibility = true;
+            Navigator.pushReplacementNamed(context, dataScreen.routeName);
+          }
+          else{
+            showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('No Device Found!'),
+                  content: const Text('Device required to add new profile.'),
+                  actions: <Widget>[
+                    IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        })
+                  ],
+                ));
+          }
 
-        refreshNotes();
-      },
+          refreshNotes();
+        },
+      ),
     ),
   );
 

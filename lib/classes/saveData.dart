@@ -110,7 +110,7 @@ class db_connection{
 
     //final idNew = await db.rawInsert("INSERT into table_name ($columns) VALUES ($values)"); //Simple SQL ki query !
 
-    print("Adding new Value Az");
+    // print("Adding new Value Az");
     final profileId = await db.insert(hBDataTableNameWithId, hbDataWithId.toMyJson());
     print("Added    new Value Az");
 
@@ -161,6 +161,35 @@ class db_connection{
     }
     else{
       throw Exception('$profileId not found!');
+    }
+  }
+
+  Future<String> deleteHBEntryByDate(int? profileId, DateTime? DateId) async {
+    final db = await instance.db_opening;
+
+    // final maps = await db.query(
+    //   hBDataTableName,
+    //   columns: HBDataTableFields.myvalues,
+    //   where: '${HBDataTableFields.fName} = ?',
+    //   whereArgs: [f_Name]
+    // );
+
+    print("Trying to Delete!");
+
+    // int pro = 1;
+
+    // if(profileId != null)
+    //   pro = pro + int.parse(profileId);
+
+    final deletedMap = await db.rawQuery("Delete FROM $hBDataTableNameWithId WHERE ${HBDataTableFields.id} = $profileId and ${HBDataTableFields.time} = '${DateId?.toIso8601String()}'");
+
+    print(deletedMap);
+
+    if(deletedMap.isNotEmpty){
+      return deletedMap.toString();
+    }
+    else{
+      throw Exception('$DateId not found!');
     }
   }
 

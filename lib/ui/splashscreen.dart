@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    FirebaseAuth.instance.signOut();
+    //FirebaseAuth.instance.signOut();
   gotoHome();
 
   }
@@ -44,9 +44,9 @@ class _SplashScreenState extends State<SplashScreen> {
     setState(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(const Duration(milliseconds: 2700)).then((value) {
-          // Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+          Navigator.pushReplacementNamed(context, HomeScreen.routeName);
           //Navigator.pushReplacementNamed(context, LoginScreen2.routeName);
-          Navigator.pushReplacementNamed(context, UserCheck.routeName);
+          // Navigator.pushReplacementNamed(context, UserCheck.routeName);
           // return Scaffold(
           //   body: StreamBuilder<User?>(
           //     stream: FirebaseAuth.instance.authStateChanges(),

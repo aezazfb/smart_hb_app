@@ -82,19 +82,36 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
+      backgroundColor: Colors.cyan,
       actions: [deleteButton()],
       leading: IconButton(onPressed: (){
         Navigator.pushReplacementNamed(context, HbsPage.routeName);
       }, icon: const Icon(Icons.arrow_back_rounded)),
-      title: Row(
+      title: Column(
         children: [
-          Text(isLoading ? "Name" : note.firstName),
-          const SizedBox(
-            width: 7,
+          Row(
+            children: [
+              Text(isLoading ? "Name" : note.firstName,
+              style: TextStyle(
+                fontSize: 18
+              ),),
+            ],
           ),
-          Column(children: [
-            Text(isLoading ? "Gender" : "Gender: ${note.gender}"),
-            Text(isLoading ? "Age" : "Age: ${note.age}"),
+          const SizedBox(
+            height: 5,
+          ),
+          Row(children: [
+            Text(isLoading ? "Age" : "Age: ${note.age}",
+              style: TextStyle(
+                  fontSize: 13
+              ),),
+            SizedBox(
+              width: 5,
+            ),
+            Text(isLoading ? "Gender" : "Gender: ${note.gender}",
+              style: TextStyle(
+                  fontSize: 13
+              ),),
           ],)
         ],
       ),
@@ -206,7 +223,35 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
     itemBuilder: (context, index) {
       final note = notes[index];
 
-      return HbEntryWidget(hbDate: DateFormat.yMMMd().format(note.date), hbValue: note.hBValue);
+      return InkWell(onLongPress: (){
+
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Delete Entry'),
+              content: const Text('Do you want to delete this record?'),
+              actions: <Widget>[
+                IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                IconButton(
+                    icon: const Icon(Icons.check),
+                    onPressed: () async {
+                      db_connection.instance.deleteHBEntryByDate(note.id, note.date);
+                      // var x = db_connection.instance.deleteHBEntryByDate(note.id, note.date);
+                      Fluttertoast.showToast(msg: "Deleted Successfully!");
+                      // Fluttertoast.showToast(msg: x.toString());
+                      // Fluttertoast.showToast(msg: note.date.toString());
+                      await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ProfileDetailPage(fn: widget.fn, profId: widget.profId,),
+                      ));
+                    })
+              ],
+            ));
+      },
+          child: HbEntryWidget(hbDate: ("${DateFormat.yMMMd().format(note.date)} ${DateFormat.jm().format(note.date)}"), hbValue: note.hBValue));
     },
   );
 }

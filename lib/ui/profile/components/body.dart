@@ -18,6 +18,7 @@ class Body extends StatelessWidget {
           ProfileMenu(
             text: "New Profile",
             icon: "myassets/User Icon.svg",
+            textCOlor: themeBgColour,
             press: () {
               if(theGlobalDevice != null) {
                 Navigator.pushReplacementNamed(context, dataScreen.routeName);
@@ -42,6 +43,7 @@ class Body extends StatelessWidget {
           ProfileMenu(
             text: "Existing Profiles",
             icon: "myassets/User.svg",
+            textCOlor: Colors.cyan,
             press: () {
               if(true) {
                 Navigator.pushReplacementNamed(context, HbsPage.routeName);

@@ -9,10 +9,12 @@ class ProfileMenu extends StatelessWidget {
     required this.text,
     required this.icon,
     this.press,
+    this.textCOlor,
   }) : super(key: key);
 
   final String text, icon;
   final VoidCallback? press;
+  final Color? textCOlor;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class ProfileMenu extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: TextButton(
         style: TextButton.styleFrom(
-          foregroundColor: themeBtnColour,
+          foregroundColor: textCOlor,
           padding: EdgeInsets.all(20),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -31,7 +33,7 @@ class ProfileMenu extends StatelessWidget {
           children: [
             SvgPicture.asset(
               icon,
-              color: themeBtnColour,
+              color: textCOlor,
               width: 22,
             ),
             SizedBox(width: 20),

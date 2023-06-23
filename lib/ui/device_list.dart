@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:myble2/src/ble/ble_scanner.dart';
@@ -101,162 +102,207 @@ class _DeviceListState extends State<_DeviceList> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth <= 370 ? 17 : 30;
-    return Scaffold(
-      drawer: const HbDrawer(),
-      appBar: AppBar(
-        title: const Text('Scan for SmartHb'),
-        backgroundColor: themeBgColour,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                //Text(screenWidth.toString()),
-                // const Text('Service UUID (2, 4, 16 bytes):'),
-                // TextField(
-                //   controller: _uuidController,
-                //   enabled: !widget.scannerState.scanIsInProgress,
-                //   decoration: InputDecoration(
-                //       errorText:
-                //           _uuidController.text.isEmpty || _isValidUuidInput()
-                //               ? null
-                //               : 'Invalid UUID format'),
-                //   autocorrect: false,
-                // ),
-                // const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: themeBtnColour,
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                          textStyle:
-                          TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
-
-                      onPressed: !widget.scannerState.scanIsInProgress &&
-                          _isValidUuidInput()
-                          ? _startScanning
-                          : null,
-                      child: const Text('Scan'),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: themeBtnColour,
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                          textStyle:
-                          TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
-                      onPressed: widget.scannerState.scanIsInProgress
-                          ? widget.stopScan
-                          : null,
-                      child: const Text('Stop'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(!widget.scannerState.scanIsInProgress
-                          ? 'Tap scan to begin scanning!'
-                          : 'Tap a device to connect to it!'),
-                    ),
-                    if (widget.scannerState.scanIsInProgress ||
-                        widget.scannerState.discoveredDevices.isNotEmpty)
-                      Padding(
-                        padding:
-                        const EdgeInsetsDirectional.only(start: 18.0),
-                        child: Text(
-                            'Devices: ${widget.scannerState.discoveredDevices.length}'),
-                      ),
-                  ],
-                ),
+    return WillPopScope(
+      onWillPop: () async {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Exit Permission'),
+              content: const Text('Do you want to exit?'),
+              actions: <Widget>[
+                IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                IconButton(
+                    icon: const Icon(Icons.check),
+                    onPressed: () {
+                      SystemNavigator.pop();
+                    })
               ],
+            ));
+        return true;
+      },
+      child: Scaffold(
+        drawer: const HbDrawer(),
+        appBar: AppBar(
+          title: const Text('Scan for SmartHb Devices'),
+          backgroundColor: themeBgColour,
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  //Text(screenWidth.toString()),
+                  // const Text('Service UUID (2, 4, 16 bytes):'),
+                  // TextField(
+                  //   controller: _uuidController,
+                  //   enabled: !widget.scannerState.scanIsInProgress,
+                  //   decoration: InputDecoration(
+                  //       errorText:
+                  //           _uuidController.text.isEmpty || _isValidUuidInput()
+                  //               ? null
+                  //               : 'Invalid UUID format'),
+                  //   autocorrect: false,
+                  // ),
+                  // const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: themeBtnColour,
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                            textStyle:
+                            TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+
+                        onPressed: !widget.scannerState.scanIsInProgress &&
+                            _isValidUuidInput()
+                            ? _startScanning
+                            : null,
+                        child: Column(
+                          children: [
+                            const Text('Scan',
+                            style: TextStyle(
+                              fontSize: 17
+                            ),),
+                            const Text('Device',
+                            style: TextStyle(
+                              fontSize: 17
+                            ),),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: themeBtnColour,
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                            textStyle:
+                            TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
+                        onPressed: widget.scannerState.scanIsInProgress
+                            ? widget.stopScan
+                            : null,
+                        child: Column(
+                          children: [
+                            const Text('Stop',
+                              style: TextStyle(
+                                  fontSize: 17
+                              ),),
+                            const Text('Device',
+                              style: TextStyle(
+                                  fontSize: 17
+                              ),),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(!widget.scannerState.scanIsInProgress
+                            ? 'Tap scan to begin scanning!'
+                            : 'Tap a device to connect to it!'),
+                      ),
+                      if (widget.scannerState.scanIsInProgress ||
+                          widget.scannerState.discoveredDevices.isNotEmpty)
+                        Padding(
+                          padding:
+                          const EdgeInsetsDirectional.only(start: 18.0),
+                          child: Text(
+                              'Devices: ${widget.scannerState.discoveredDevices.length}'),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Flexible(
-            child: ListView(
-              children: widget.scannerState.discoveredDevices
-                  .map(
-                    (device) => ListTile(
-                  title: Text(device.name),
-                  subtitle: Text(device.id), //\nRSSI: ${device.rssi}
-                  leading: const BluetoothIcon(),
-                  onTap: () async {
-                    widget.stopScan();
+            const SizedBox(height: 8),
+            Flexible(
+              child: ListView(
+                children: widget.scannerState.discoveredDevices
+                    .map(
+                      (device) => ListTile(
+                    title: Text(device.name),
+                    subtitle: Text(device.id), //\nRSSI: ${device.rssi}
+                    leading: const BluetoothIcon(),
+                    onTap: () async {
+                      widget.stopScan();
 
-                    // Fluttertoast.showToast(msg: device.name + device.id,
-                    //     timeInSecForIosWeb: 3);
-                    // _connect_it(device.id);
-                    // Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
-                    //     timeInSecForIosWeb: 3);
-                    if(deviceConnected == true){
-                      // my disconnect condition
-                      _disconnect_it(theGlobalDevice!.id);
-                      Fluttertoast.showToast(msg: 'Disconnected ${theGlobalDevice!.name}!',
-                          timeInSecForIosWeb: 3);
-                      setState(() {
-                        theGlobalDevice = null;
-                        //theGlobalDevice = device;
-                        deviceConnected = false;
-                      });
+                      // Fluttertoast.showToast(msg: device.name + device.id,
+                      //     timeInSecForIosWeb: 3);
+                      // _connect_it(device.id);
+                      // Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
+                      //     timeInSecForIosWeb: 3);
+                      if(deviceConnected == true){
+                        // my disconnect condition
+                        _disconnect_it(theGlobalDevice!.id);
+                        Fluttertoast.showToast(msg: 'Disconnected ${theGlobalDevice!.name}!',
+                            timeInSecForIosWeb: 3);
+                        setState(() {
+                          theGlobalDevice = null;
+                          //theGlobalDevice = device;
+                          deviceConnected = false;
+                        });
 
-                      if(theGlobalDevice != null){
+                        if(theGlobalDevice != null){
+                          _connect_it(device.id);
+                          Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
+                              timeInSecForIosWeb: 3);
+                          setState(() {
+                            theGlobalDevice = null;
+                            theGlobalDevice = device;
+                            deviceConnected = true;
+                          });
+                        }
+
+                      }
+                      else{
+                        if(theGlobalDevice != null){
+                          _disconnect_it(theGlobalDevice!.id);
+                        }
                         _connect_it(device.id);
                         Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
                             timeInSecForIosWeb: 3);
+
                         setState(() {
                           theGlobalDevice = null;
                           theGlobalDevice = device;
                           deviceConnected = true;
                         });
+
+                        Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+
+                        // await Navigator.push<void>(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (_) =>
+                        //             dataScreen(thedevice: theGlobalDevice)));
                       }
-
-                    }
-                    else{
-                      if(theGlobalDevice != null){
-                        _disconnect_it(theGlobalDevice!.id);
-                      }
-                      _connect_it(device.id);
-                      Fluttertoast.showToast(msg: 'Connected to ${device.name}!',
-                          timeInSecForIosWeb: 3);
-
-                      setState(() {
-                        theGlobalDevice = null;
-                        theGlobalDevice = device;
-                        deviceConnected = true;
-                      });
-
-                      Navigator.pushReplacementNamed(context, ProfileScreen.routeName);
+                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ye rahha snack!")));
 
                       // await Navigator.push<void>(
                       //     context,
                       //     MaterialPageRoute(
                       //         builder: (_) =>
-                      //             dataScreen(thedevice: theGlobalDevice)));
-                    }
-                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ye rahha snack!")));
-
-                    // await Navigator.push<void>(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (_) =>
-                    //             DeviceDetailScreen(device: device)));
-                  },
-                ),
-              )
-                  .toList(),
+                      //             DeviceDetailScreen(device: device)));
+                    },
+                  ),
+                )
+                    .toList(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
