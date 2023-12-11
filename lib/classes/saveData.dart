@@ -75,6 +75,27 @@ class db_connection{
     ${HBDataTableFields.time} $textType   
     )
     ''');
+
+    // await db.execute('''
+    // CREATE TABLE $loginTblName (
+    // ${LoginTableFields.id} 'INTEGER',
+    // ${LoginTableFields.fullName} 'TEXT',
+    // ${LoginTableFields.mobile} 'TEXT',
+    // ${LoginTableFields.loginId} $textType,
+    // ${LoginTableFields.loginPassword} $textType
+    // )
+    // ''');
+
+    // //USers table
+    await db.execute('''
+    CREATE TABLE 'Users' (
+    'loginId' $textType,
+    'loginPassword' $textType,
+    'mobile' $textType
+    )
+    ''');
+
+
     print("Table Create Az!");
   }
 
@@ -115,6 +136,63 @@ class db_connection{
     print("Added    new Value Az");
 
     return hbDataWithId.copy(id : profileId);
+  }
+
+  Future<String> createUser (String loginId, String loginPassword, String mobile) async {
+    final db = await instance.db_opening;
+
+
+    // final profileId = await db.insert('Users', hbDataWithId.toMyJson());
+    final idNew = await db.rawInsert("INSERT into Users('loginId', 'loginPassword', 'mobile') VALUES ('$loginId', '$loginPassword', '$mobile')"); //Simple SQL ki query !
+
+    // print("$loginId User added");
+
+    return idNew.toString();
+  }
+
+  Future<String> changeUserPass (String loginId, String loginPassword, String mobile) async {
+    final db = await instance.db_opening;
+
+
+    // final profileId = await db.insert('Users', hbDataWithId.toMyJson());
+    int updateCount = await db.rawUpdate('''
+    UPDATE Users 
+    SET loginPassword = ? 
+    WHERE loginId = ?
+    ''',
+        [loginPassword, loginId]);
+    // print("$loginId User added");
+
+    return 'Updated!';
+  }
+
+  Future<LoginData> createUser2 (LoginData loginData) async {
+    final db = await instance.db_opening;
+
+
+    // final profileId = await db.insert('Users', hbDataWithId.toMyJson());
+    // final idNew = await db.rawInsert("INSERT into Users('loginId', 'loginPassword', 'mobile') VALUES ($loginId, $loginPassword, $mobile)"); //Simple SQL ki query !
+    final profileId = await db.insert(loginTblName, loginData.toMyJsonLogin());
+    // print("$loginId User added");
+
+    // return idNew.toString();
+    return loginData.Copy(id : profileId);
+  }
+
+  Future<String> loginUser (String loginId) async {
+    final db = await instance.db_opening;
+
+
+    final maps = await db.rawQuery("SELECT loginPassword FROM Users WHERE loginId = '$loginId'");
+
+    if(maps.isNotEmpty){
+      Map<String,Object?> c = maps.first;
+      return (c.values.first.toString());
+    }
+    else{
+      // throw Exception('$loginId not found!');
+      return 'Id not found!';
+    }
   }
 
   Future<HBData> getHB(String f_Name) async {
@@ -193,6 +271,32 @@ class db_connection{
     }
   }
 
+  Future<String> deleteHBProfile(int? profileId) async {
+    final db = await instance.db_opening;
+
+    print("Trying to Delete profile!");
+
+    // int pro = 1;
+
+    // if(profileId != null)
+    //   pro = pro + int.parse(profileId);
+
+    final deletedMap = await db.rawQuery("Delete FROM $hBDataTableName WHERE ${HBDataTableFields.id} = $profileId");
+    final deletedMap2 = await db.rawQuery("Delete FROM $hBDataTableNameWithId WHERE ${HBDataTableFields.id} = $profileId");
+
+    print(deletedMap);
+
+    if(deletedMap.isNotEmpty){
+      return deletedMap.toString();
+    }
+    else{
+      throw Exception('$profileId not found!');
+    }
+  }
+
+
+
+
   Future<List<HBData>> getAllhBProfiles() async{
     final db = await instance.db_opening;
 
@@ -203,6 +307,8 @@ class db_connection{
 
     return myResult.map((eData) => HBData.fromJson(eData)).toList();
   }
+
+
 
   Future<List<HBData>> getAllhBsById(int? profId) async{
     final db = await instance.db_opening;

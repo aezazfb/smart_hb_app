@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smart_hb_app/Models/hBProfileData.dart';
 import 'package:smart_hb_app/classes/saveData.dart';
 import 'package:smart_hb_app/globalVars.dart';
@@ -68,7 +69,7 @@ class _HbsPageState extends State<HbsPage> {
           'No Profile Stored',
           style: TextStyle(color: Colors.white, fontSize: 24),
         )
-            : buildNotes(),
+            : buildProfiles(),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: themeBgColour,
@@ -105,7 +106,7 @@ class _HbsPageState extends State<HbsPage> {
     ),
   );
 
-  Widget buildNotes() => StaggeredGridView.countBuilder(
+  Widget buildProfiles() => StaggeredGridView.countBuilder(
     padding: const EdgeInsets.all(8),
     itemCount: notes.length,
     staggeredTileBuilder: (index) => const StaggeredTile.fit(2),
@@ -116,6 +117,33 @@ class _HbsPageState extends State<HbsPage> {
       final note = notes[index];
 
       return GestureDetector(
+        onLongPress: (){
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Delete Profile'),
+                content: const Text('Do you want to delete this profile?'),
+                actions: <Widget>[
+                  IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }),
+                  IconButton(
+                      icon: const Icon(Icons.check),
+                      onPressed: () async {
+                        db_connection.instance.deleteHBProfile(note.id);
+                        // var x = db_connection.instance.deleteHBEntryByDate(note.id, note.date);
+                        Fluttertoast.showToast(msg: "Profile Deleted Successfully!");
+                        // Fluttertoast.showToast(msg: x.toString());
+                        // Fluttertoast.showToast(msg: note.date.toString());
+                        await Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => HbsPage(),
+                        ));
+                      })
+                ],
+              ));
+        },
         onTap: () async {
           await Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ProfileDetailPage(fn: note.firstName, profId: note.id,),

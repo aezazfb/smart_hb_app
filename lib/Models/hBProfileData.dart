@@ -1,5 +1,6 @@
 const String hBDataTableName = 'hBDataTable';
 const String hBDataTableNameWithId = 'HbsWithId';
+const String loginTblName = 'loginUsers';
 
 class HBDataTableFields {
   static const List<String> myvalues = [
@@ -11,6 +12,58 @@ class HBDataTableFields {
   static const String gender = 'gender';
   static const String hBValue = 'hBValue';
   static const String time = 'time';
+}
+
+class LoginTableFields {
+  static const List<String> myvalues = [
+    id, fullName, mobile, loginId, loginPassword
+  ];
+  static const String id = '_id';
+  static const String fullName = 'fullName';
+  static const String mobile = 'mobile';
+  // static const String gender = 'gender';
+  static const String loginId = 'loginId';
+  static const String loginPassword = 'loginPassword';
+}
+
+class LoginData{
+  final int? id;
+  final String? fullName;
+  final String? mobile;
+  final String loginId;
+  final String loginPassword;
+
+  const LoginData({
+    this.id,
+    this.fullName,
+    this.mobile,
+    required this.loginId,
+    required this.loginPassword
+});
+
+  LoginData Copy({
+  int? id,
+    String? fullName,
+    String? mobile,
+    String? loginId,
+    String? loginPassword
+
+}) => LoginData(
+      loginId: loginId ?? this.loginId,
+      loginPassword: loginPassword ?? this.loginPassword,
+      id: id ?? this.id,
+      fullName: fullName ?? this.fullName,
+      mobile: mobile ?? this.mobile
+  );
+
+  Map<String, Object?> toMyJsonLogin() => {
+    LoginTableFields.id : id,
+    LoginTableFields.fullName : fullName,
+    LoginTableFields.mobile : mobile,
+    LoginTableFields.loginId : loginId,
+    LoginTableFields.loginPassword : loginPassword,
+  };
+
 }
 
 class HBData{
@@ -61,6 +114,8 @@ class HBData{
     HBDataTableFields.hBValue : hBValue,  //for bool, HBDataTableFields.male : true ? 1 : 0
     HBDataTableFields.time : date.toIso8601String(),
   };
+
+
 
 }
 

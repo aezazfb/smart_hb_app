@@ -82,43 +82,43 @@ class _AddNewHbScreenState extends State<AddNewHbScreen> {
                       ],
                     ),
 
-                    const SizedBox(
-                      height: 80,
-                    ),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-
-                        onPressed: (){
-
-                          if(readingData == true){
-                            Fluttertoast.showToast(msg: 'Reading Already!',
-                                timeInSecForIosWeb: 2);
-                          }
-                          else{
-                            Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
-                                timeInSecForIosWeb: 3);
-                            theData.readData(theDevice.id);
-
-                            setState(() {
-                              isSaveBtnDisabled = true;
-                              readingData = true;
-                            });
-                            // myd = hbValue.value;
-                          }
-
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(themeBtnColour),
-                        ),
-                        child: Text(readingData == true ? 'Reading Data!' : 'Start Reading Data', style: const TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w600,
-                        )),
-                      ),
-                    ),
+                    // const SizedBox(
+                    //   height: 80,
+                    // ),
+                    //
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   height: 50,
+                    //   child: ElevatedButton(
+                    //
+                    //     onPressed: (){
+                    //
+                    //       if(readingData == true){
+                    //         Fluttertoast.showToast(msg: 'Reading Already!',
+                    //             timeInSecForIosWeb: 2);
+                    //       }
+                    //       else{
+                    //         Fluttertoast.showToast(msg: 'Reading Data from ${theDevice.name}!',
+                    //             timeInSecForIosWeb: 3);
+                    //         theData.readData(theDevice.id);
+                    //
+                    //         setState(() {
+                    //           isSaveBtnDisabled = true;
+                    //           readingData = true;
+                    //         });
+                    //         // myd = hbValue.value;
+                    //       }
+                    //
+                    //     },
+                    //     style: ButtonStyle(
+                    //       backgroundColor: MaterialStateProperty.all(themeBtnColour),
+                    //     ),
+                    //     child: Text(readingData == true ? 'Reading Data!' : 'Start Reading Data', style: const TextStyle(
+                    //       fontFamily: 'Montserrat',
+                    //       fontWeight: FontWeight.w600,
+                    //     )),
+                    //   ),
+                    // ),
 
 
 
@@ -141,17 +141,17 @@ class _AddNewHbScreenState extends State<AddNewHbScreen> {
                           if(theData.hB != ' '){
                             addHBinProfile(theData.hB).then((value) async {
 
-                              setState(() {
-                                saveVisibility == true ? saveVisibility = false : saveVisibility = true;
-
-                                isSaveBtnDisabled == true ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
-                                readingData = false;
-                                theData.hB = ' '.obs;
-                              });
-
-                              await Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ProfileDetailPage(fn: widget.theFirstName, profId: widget.theProfileId,),
-                              ));
+                              // setState(() {
+                              //   saveVisibility == true ? saveVisibility = false : saveVisibility = true;
+                              //
+                              //   isSaveBtnDisabled == true ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                              //   readingData = false;
+                              //   theData.hB = ' '.obs;
+                              // });
+                              //
+                              // await Navigator.of(context).push(MaterialPageRoute(
+                              //   builder: (context) => ProfileDetailPage(fn: widget.theFirstName, profId: widget.theProfileId,),
+                              // ));
                             });
                           }
                           else{
@@ -171,12 +171,16 @@ class _AddNewHbScreenState extends State<AddNewHbScreen> {
                         )),
                       ),
                     ),
+                    const SizedBox(height: 13,),
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () async {
-                          Navigator.pop(context);
+                          await Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ProfileDetailPage(fn: widget.theFirstName, profId: widget.theProfileId,),
+                          ));
+                          // Navigator.pop(context);
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(themeBtnColour),

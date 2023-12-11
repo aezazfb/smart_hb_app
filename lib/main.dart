@@ -23,6 +23,7 @@ import 'package:provider/provider.dart';
 import "package:firebase_core/firebase_core.dart";
 
 import 'package:smart_hb_app/functionalities/ble_logger.dart';
+import 'package:smart_hb_app/ui/localLogin.dart';
 import 'package:smart_hb_app/ui/splashscreen.dart';
 // import 'src/ble/ble_logger.dart';
 
@@ -30,7 +31,7 @@ const _themeColor = Colors.green;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //await Firebase.initializeApp();
+  await Firebase.initializeApp();
 
   final _bleLogger = BleLogger();
   final _ble = FlutterReactiveBle();
@@ -103,7 +104,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) => Consumer<BleStatus?>(
     builder: (_, status, __) {
       if (status == BleStatus.ready) {
-        return const DeviceListScreen();
+        return LocalLoginScreen();
+        // return const DeviceListScreen();
       } else {
         //return const DeviceListScreen();
         return BleStatusScreen(mystatus: status ?? BleStatus.unknown);

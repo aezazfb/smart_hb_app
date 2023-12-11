@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:get/get.dart';
 
 Uint8List example = Uint8List.fromList([0, 2, 5 ,7]);
 
@@ -18,3 +19,8 @@ const themeFont = 'Helvetica Regular';
 bool readingData = false;
 bool isSaveBtnDisabled = false;
 bool saveVisibility = true;
+
+RxBool popUpObscure = false.obs;
+RxBool popUpObscure1 = false.obs;
+
+String? currentUser;

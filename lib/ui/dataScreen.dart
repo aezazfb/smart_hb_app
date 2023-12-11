@@ -84,7 +84,7 @@ class _dataScreenState extends State<dataScreen> {
     HBData idAdded = await db_connection.instance.create(nt);
     Fluttertoast.showToast(msg: '${idAdded.firstName} Profile Added!!! ', timeInSecForIosWeb: 3);
 
-    addHB(hb, idAdded.id, age, fname, dropdownValue);
+    //addHB(hb, idAdded.id, age, fname, dropdownValue);
     return idAdded.id;
 
   }
@@ -171,7 +171,7 @@ class _dataScreenState extends State<dataScreen> {
 
 
                       Visibility(
-                        visible: isSaveBtnDisabled,
+                        visible: false,//isSaveBtnDisabled,
                         child: Column(
                           children: [
                             Row(
@@ -427,9 +427,26 @@ class _dataScreenState extends State<dataScreen> {
                                 onPressed: () async {
                                   if(textIsEmpty == false){
                                     setState(() {
-                                      saveVisibility ? saveVisibility = false : saveVisibility = true;
+                                      // saveVisibility ? saveVisibility = false : saveVisibility = true;
+                                      //
+                                      // isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                      theData.readData(theDevice.id);
 
-                                      isSaveBtnDisabled ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                      addProfile(theData.hB);
+
+                                      firstnameController.clear();
+                                      lastnameController.clear();
+                                      genderController.clear();
+
+                                      // setState(() {
+                                      //   saveVisibility == true ? saveVisibility = false : saveVisibility = true;
+                                      //
+                                      //   isSaveBtnDisabled == true ? isSaveBtnDisabled = false : isSaveBtnDisabled = true;
+                                      //   readingData = false;
+                                      //   theData.hB = ' '.obs;
+                                      // });
+
+                                      Navigator.pushReplacementNamed(context, HbsPage.routeName);
                                     });
                                   }
                                   else {

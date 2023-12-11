@@ -50,6 +50,8 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
   //final frb = FlutterReactiveBle();
   final theData = Get.put(TheData());
 
+  final DiscoveredDevice theDevice = theGlobalDevice!;
+
   Future refreshNote() async {
     // setState(() async{
     //   isLoading = true;
@@ -134,6 +136,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
           context: context,
           builder: (BuildContext context) {
             if(theGlobalDevice != null) {
+              theData.readData(theDevice.id);
               return AddNewHbScreen(theFirstName: widget.fn, theProfileId: widget.profId, theAge: note.age, theGender: note.gender,);
             }
             else{
