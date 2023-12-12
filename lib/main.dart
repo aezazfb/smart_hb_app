@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smart_hb_app/functionalities/ble_device_connector.dart';
 // import 'package:myble2/src/ble/ble_device_connector.dart';
 import 'package:smart_hb_app/functionalities/ble_device_interactor.dart';
@@ -94,22 +96,45 @@ Future main() async {
   );
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   static String routeName = "/homeee";
   const HomeScreen({
     Key? key,
   }) : super(key: key);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) => Consumer<BleStatus?>(
     builder: (_, status, __) {
-      if (status == BleStatus.ready) {
-        return LocalLoginScreen();
-        // return const DeviceListScreen();
-      } else {
-        //return const DeviceListScreen();
-        return BleStatusScreen(mystatus: status ?? BleStatus.unknown);
-      }
+
+      //Fluttertoast.showToast(msg: "Grant Necessary Permissions!").then((value) => checkPermissions());
+      checkPermissions();
+      return LocalLoginScreen(currentBleStatus: status);
+
+      // if (status == BleStatus.ready) {
+      //   Fluttertoast.showToast(msg: "Grant Necessary Permissions!").then((value) => openAppSettings());
+      //   return LocalLoginScreen();
+      //   // return const DeviceListScreen();
+      // } else {
+      //   //return const DeviceListScreen();
+      //   Fluttertoast.showToast(msg: "Grant Necessary Permissions!").then((value) => openAppSettings());
+      //   return LocalLoginScreen();
+      //   //return BleStatusScreen(mystatus: status ?? BleStatus.unknown);
+      // }
     },
   );
+
+  checkPermissions() async {
+    Map<Permission, PermissionStatus> statuses = await [
+    Permission.storage,
+      Permission.location,
+      Permission.bluetooth,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan
+    ].request();
+  }
 }

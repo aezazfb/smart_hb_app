@@ -28,7 +28,7 @@ class Body extends StatelessWidget {
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
                       title: const Text('No Device Found!'),
-                      content: const Text('Device required to add new profile.'),
+                      content: const Text('Turn on bluetooth to add a device and add new profile.'),
                       actions: <Widget>[
                         IconButton(
                             icon: const Icon(Icons.close),

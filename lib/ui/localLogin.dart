@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:smart_hb_app/globalVars.dart';
 import 'package:smart_hb_app/ui/device_list.dart';
@@ -11,11 +12,20 @@ import 'package:smart_hb_app/classes/saveData.dart';
 class LocalLoginScreen extends StatefulWidget {
   static String routeName = "/locallogin";
 
+  LocalLoginScreen({super.key, this.currentBleStatus});
+
+  BleStatus? currentBleStatus;
+
   @override
-  _LocalLoginScreenState createState() => _LocalLoginScreenState();
+  _LocalLoginScreenState createState() => _LocalLoginScreenState(currentBleStatus);
 }
 
 class _LocalLoginScreenState extends State<LocalLoginScreen> {
+
+  _LocalLoginScreenState(
+      this.currentBleStatus
+      );
+  BleStatus? currentBleStatus;
 
   bool isObsecure = true;
 
@@ -31,6 +41,9 @@ class _LocalLoginScreenState extends State<LocalLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if(currentBleStatus != BleStatus.ready){
+      Fluttertoast.showToast(msg: "Bluetooth is Off!");
+    }
     return WillPopScope(
       onWillPop:()async{
         showDialog(

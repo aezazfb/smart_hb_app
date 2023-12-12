@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smart_hb_app/globalVars.dart';
 import 'package:smart_hb_app/main.dart';
 import 'package:smart_hb_app/ui/LoginPage.dart';
@@ -23,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
       home: Scaffold(
           backgroundColor: themeBgColour,
           body: const Image(image: AssetImage("myassets/smartScreen.png"),
-            //fit: BoxFit.cover,
+            fit: BoxFit.fitWidth,
             height: double.infinity,
             width: double.infinity,
           )),
@@ -34,9 +35,29 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     //FirebaseAuth.instance.signOut();
+    // checkPerm();
   gotoHome();
 
   }
+
+  // checkPerm() async {
+  //   var statusBluetooth = await Permission.bluetooth.status;
+  //   if (statusBluetooth.isDenied || statusBluetooth.isRestricted || statusBluetooth.isLimited || statusBluetooth.isPermanentlyDenied) {
+  //     openAppSettings();
+  //     if(await Permission.bluetooth.request().isGranted){
+  //       gotoHome();
+  //     }
+  //
+  //   }
+  //   else{
+  //     gotoHome();
+  //   }
+  //
+  //   // if (await Permission.bluetooth.status_bluetooth.isPermanentlyDenied) {
+  //   //   openAppSettings();
+  //   // }
+  //
+  // }
 
   Future gotoHome() async {
     // Future.delayed(const Duration(milliseconds: 5700));

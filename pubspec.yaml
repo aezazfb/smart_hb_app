@@ -42,7 +42,7 @@ dependencies:
   intl: ^0.17.0
   provider: ^6.0.1
   csv: ^5.0.0
-  permission_handler: ^7.1.0
+  permission_handler: ^8.2.5
   path_provider: ^2.0.2
   fluttertoast: ^8.0.9
   sqflite: ^2.0.0+3
