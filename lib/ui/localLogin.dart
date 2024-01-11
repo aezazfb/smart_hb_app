@@ -41,9 +41,9 @@ class _LocalLoginScreenState extends State<LocalLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if(currentBleStatus != BleStatus.ready){
-      Fluttertoast.showToast(msg: "Bluetooth is Off!");
-    }
+    // if(currentBleStatus != BleStatus.ready){
+    //   Fluttertoast.showToast(msg: "Bluetooth is Off!");
+    // }
     return WillPopScope(
       onWillPop:()async{
         showDialog(
